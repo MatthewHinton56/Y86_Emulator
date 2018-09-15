@@ -19,6 +19,8 @@ public class Compiler {
 		compiled = true;
 		COMPILED_INSTRUCTIONS.clear();
 		COMPILED_CONSTANTS.clear();
+		if(inputLines.size() == 0)
+			return "";
 		start_address = inputLines.get(0).address;
 		String output = "";
 		String offset,rB;
@@ -33,13 +35,19 @@ public class Compiler {
 			case "halt":
 			case "ret":
 			case "nop":
-				instruction = InstructionBuilder.getInstruction(l.splitLine[0], null, null, null);
+				if(l.splitLine.length > 1)
+					throw new IllegalArgumentException("Invalid instruction argument - " + l.splitLine[0] +" does not take an argument\n"
+							+ "Error occured on the line: "+ l.line);
+				instruction = InstructionBuilder.getInstruction(l.splitLine[0], null, null, null, l.line);
 				outputLine += convertArrayToString(instruction);
 				COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
 				break;
 			case "pushq":
 			case "popq":
-				instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1],  "No register", null);
+				if(l.splitLine.length != 2)
+					throw new IllegalArgumentException("Invalid instruction argument - " + l.splitLine[0] +" requires only 1 register argument\n"
+							+ "Error occured on the line: "+ l.line);
+				instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1],  "No register", null, l.line);
 				outputLine += convertArrayToString(instruction);
 				COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
 				break;
@@ -54,7 +62,13 @@ public class Compiler {
 			case "subq":
 			case "xorq":
 			case "andq":
-				instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1],   l.splitLine[2], null);
+				if(l.splitLine.length != 3)
+					throw new IllegalArgumentException("Invalid instruction argument - " + l.splitLine[0] +" requires 2 register arguments\n"
+							+ "Error occured on the line: "+ l.line);
+				if(!l.line.contains(","))
+					throw new IllegalArgumentException("Invalid instruction argument - Comma is required\n"
+							+ "Error occured on the line: "+ l.line);
+				instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1],   l.splitLine[2], null, l.line);
 				outputLine += convertArrayToString(instruction);
 				COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
 				break;
@@ -65,22 +79,45 @@ public class Compiler {
 			case "jge":
 			case "jne":
 			case "je":
-			case "jl":	
-				instruction = InstructionBuilder.getInstruction(l.splitLine[0], null,   null, new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false));
+			case "jl":
+				if(l.splitLine.length != 2)
+					throw new IllegalArgumentException("Invalid instruction argument - " + l.splitLine[0] +" requires 1 Tag argument\n"
+							+ "Error occured on the line: "+ l.line);
+				if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
+					throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
+							+ "Error occured on the line: "+ l.line);
+				instruction = InstructionBuilder.getInstruction(l.splitLine[0], null,   null, new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false), l.line);
 				outputLine += convertArrayToString(instruction);
 				COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
 				break;
 			case "irmovq":
+				if(!l.line.contains(","))
+					throw new IllegalArgumentException("Invalid instruction argument - Comma is required\n"
+							+ "Error occured on the line: "+ l.line);
 				outputLine = irmovq(outputLine, l);
 				break;	
-
-			case "rmmovq": 
+			case "rmmovq":
+				if(!l.line.contains(","))
+					throw new IllegalArgumentException("Invalid instruction argument - Comma is required\n"
+							+ "Error occured on the line: "+ l.line);
 				outputLine = rmmovq(outputLine, l);
-				break;	
-
-			case "mrmovq": 
+				break;
+			case "mrmovq":
+				if(!l.line.contains(","))
+					throw new IllegalArgumentException("Invalid instruction argument - Comma is required\n"
+							+ "Error occured on the line: "+ l.line);
 				outputLine = mrmovq(outputLine, l);
 				break;		
+			case ".pos":
+			case ".align":
+				break;
+			default:
+				if(l.splitLine[0].contains("."))
+					throw new IllegalArgumentException("Invalid assembler directive: " + l.splitLine[0] + "\n"
+							+ "Error occured on the line: "+ l.line);
+				else 
+					throw new IllegalArgumentException("Invalid instruction: " + l.splitLine[0] + "\n"
+							+ "Error occured on the line: "+ l.line);
 			}
 			outputLine+= " "+l.line+"\n";
 			outputWindow.setText(outputWindow.getText() + l.line + " ==> " + outputLine+"\n");
@@ -91,18 +128,35 @@ public class Compiler {
 
 
 	private static String irmovq(String output, Line l) {
+		DoubleWord dw;
+		if(l.splitLine.length !=3)
+			throw new IllegalArgumentException("Invalid instruction argument - irmovq requires 1 register and 1 immediate\n"
+					+ "Error occured on the line: "+ l.line);
 		String[] instruction;
 		if(TAG_TO_ADDRESS.containsKey(l.splitLine[1])) {
-			DoubleWord dw = new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw);
+			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
+						+ "Error occured on the line: "+ l.line);
+			dw = new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false);
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw, l.line);
 			output += convertArrayToString(instruction);
 		} else if(l.splitLine[1].contains("0x")) {
-			DoubleWord dw = new DoubleWord(l.splitLine[1].substring(3), false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw);
+			try {
+				dw = new DoubleWord(l.splitLine[1].substring(2), false);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Hex argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw, l.line);
 			output += convertArrayToString(instruction);
 		} else {
-			DoubleWord dw = new DoubleWord(Long.parseLong(l.splitLine[1].substring(1)));
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw);
+			try {
+				dw = new DoubleWord(Long.parseLong(l.splitLine[1].substring(1)));
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Integer argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw, l.line);
 			output += convertArrayToString(instruction);
 		}
 		COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
@@ -111,22 +165,42 @@ public class Compiler {
 
 
 	private static String rmmovq(String output, Line l) {
+		if(l.splitLine.length != 3)
+			throw new IllegalArgumentException("Invalid instruction argument - rmmovq requires 1 register and 1 memory function\n"
+					+ "Error occured on the line: "+ l.line);
+		if(!l.splitLine[2].contains("(") || !l.splitLine[2].contains(")"))
+			throw new IllegalArgumentException("Invalid instruction argument - The second argument of mrmovq must be the memory function\n"
+					+ "Error occured on the line: "+ l.line);
 		String offset;
 		String rB;
 		String[] instruction;
+		DoubleWord dw;
 		offset = l.splitLine[2].substring(0,l.splitLine[2].indexOf("("));
 		rB = l.splitLine[2].substring(l.splitLine[2].indexOf("(")+1,l.splitLine[2].indexOf(")"));
 		if(TAG_TO_ADDRESS.containsKey(offset)) {
-			DoubleWord dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1], rB, dw);
+			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
+						+ "Error occured on the line: "+ l.line);
+			dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		} else if(offset.contains("0x")) {
-			DoubleWord dw = new DoubleWord(offset.substring(2), false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0],  l.splitLine[1], rB, dw);
+			try {
+				dw = new DoubleWord(offset.substring(2), false);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Hex argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0],  l.splitLine[1], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		} else {
-			DoubleWord dw = (offset.length() > 0) ? new DoubleWord(Long.parseLong(offset)) : new DoubleWord(0);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0],  l.splitLine[1], rB, dw);
+			try {
+				dw = (offset.length() > 0) ? new DoubleWord(Long.parseLong(offset)) : new DoubleWord(0);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Integer argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0],  l.splitLine[1], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		}
 		COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
@@ -135,22 +209,42 @@ public class Compiler {
 
 
 	private static String mrmovq(String output, Line l) {
+		if(l.splitLine.length != 3)
+			throw new IllegalArgumentException("Invalid instruction argument - mrmovq requires 1 register and 1 memory function\n"
+					+ "Error occured on the line: "+ l.line);
+		if(!l.splitLine[1].contains("(") || !l.splitLine[1].contains(")"))
+			throw new IllegalArgumentException("Invalid instruction argument - The first argument of mrmovq must be the memory function\n"
+					+ "Error occured on the line: "+ l.line);
 		String offset;
 		String rB;
 		String[] instruction;
+		DoubleWord dw;
 		offset = l.splitLine[1].substring(0,l.splitLine[1].indexOf("("));
 		rB = l.splitLine[1].substring(l.splitLine[1].indexOf("(")+1,l.splitLine[1].indexOf(")"));
 		if(TAG_TO_ADDRESS.containsKey(offset)) {
-			DoubleWord dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw);
+			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
+						+ "Error occured on the line: "+ l.line);
+			dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		} else if(offset.contains("0x")) {
-			DoubleWord dw = new DoubleWord(offset.substring(2), false);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw);
+			try {
+				dw = new DoubleWord(offset.substring(2), false);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Hex argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		} else {
-			DoubleWord dw = (offset.length() > 0) ? new DoubleWord(Long.parseLong(offset)) : new DoubleWord(0);
-			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw);
+			try {
+				dw = (offset.length() > 0) ? new DoubleWord(Long.parseLong(offset)) : new DoubleWord(0);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Integer argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
+			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw, l.line);
 			output += convertArrayToString(instruction);
 		}
 		COMPILED_INSTRUCTIONS.put(Long.parseLong(l.address, 16),instruction);
@@ -159,16 +253,33 @@ public class Compiler {
 
 
 	private static String quadDirective(String output, Line l) {
+		DoubleWord dw;
+		if(l.splitLine.length != 2)
+			throw new IllegalArgumentException("Invalid instruction argument - mrmovq requires 1 register and 1 memory function\n"
+					+ "Error occured on the line: "+ l.line);
 		if(TAG_TO_ADDRESS.containsKey(l.splitLine[1])) {
-			DoubleWord dw = new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false);
+			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
+						+ "Error occured on the line: "+ l.line);
+			dw = new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false);
 			output += dw.generateHexLE();
 			COMPILED_CONSTANTS.put(Long.parseLong(l.address, 16), dw);
 		} else if(l.splitLine[1].contains("0x")) {
-			DoubleWord dw = new DoubleWord(l.splitLine[1].substring(2), false);
+			try {
+				dw = new DoubleWord(l.splitLine[1].substring(2), false);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Hex argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
 			output += dw.generateHexLE();
 			COMPILED_CONSTANTS.put(Long.parseLong(l.address, 16), dw);
 		} else {
-			DoubleWord dw = new DoubleWord(Long.parseLong(l.splitLine[1]));
+			try {
+				dw = new DoubleWord(Long.parseLong(l.splitLine[1]));
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid instruction argument - Invalid Integer argument: "+ l.splitLine[1]+"\n"
+						+ "Error occured on the line: "+ l.line);
+			}
 			output += dw.generateHexLE();
 			COMPILED_CONSTANTS.put(Long.parseLong(l.address, 16), dw);
 		}
@@ -204,20 +315,14 @@ public class Compiler {
 				if(instruction.startsWith(".")) {
 					switch(instruction) {
 					case ".pos":
-						if(splitLine[1].startsWith("0x")) {
-							address = Integer.parseInt(splitLine[1].substring(2),16);
-						} else {
-							address = Integer.parseInt(splitLine[1]);
-						}
-						inputLines.add(new Line(Long.toHexString(address),splitLine,sLine));
+						address = posPreProcess(address, sLine, splitLine);
 						break;
 					case ".quad":
 						inputLines.add(new Line(Long.toHexString(address),splitLine,sLine));
 						address+=8;
 						break;
 					case ".align":
-						address = address + address%Integer.parseInt(splitLine[1]);
-						inputLines.add(new Line(Long.toHexString(address),splitLine,sLine));
+						address = alignPreProcess(address, sLine, splitLine);
 						break;
 					}
 				} else if(instruction.contains(":")) {
@@ -235,9 +340,48 @@ public class Compiler {
 						address += 2;
 				}
 			} else {
-				
+
 			}
 		}
+	}
+
+
+	private static long posPreProcess(long address, String sLine, String[] splitLine) {
+		if(splitLine.length < 2)
+			throw new IllegalArgumentException("Invalid assembler directive argument - .pos requires an address argument.\n"
+					+ "Error occured on the line: "+ sLine);
+		if(splitLine[1].startsWith("0x")) {
+			try {
+				address = Integer.parseInt(splitLine[1].substring(2),16);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid assembler directive argument - Invalid Hex argument: "+ splitLine[1]+" for .pos.\n"
+						+ "Error occured on the line: "+ sLine);
+			}
+		} else {
+			try {
+				address = Integer.parseInt(splitLine[1]);
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid assembler directive argument - Invalid Integer argument: "+ splitLine[1]+" for .pos.\n"
+						+ "Error occured on the line: "+ sLine);
+			}
+		}
+		inputLines.add(new Line(Long.toHexString(address),splitLine,sLine));
+		return address;
+	}
+
+
+	private static long alignPreProcess(long address, String sLine, String[] splitLine) {
+		if(splitLine.length < 2)
+			throw new IllegalArgumentException("Invalid assembler directive argument - .align requires an address argument.\n"
+					+ "Error occured on the line: "+ sLine);
+		try {
+			address = address + address%Integer.parseInt(splitLine[1]);
+		} catch(NumberFormatException e) {
+			throw new IllegalArgumentException("Invalid assembler directive argument - Invalid Integer argument: "+ splitLine[1]+" for .align.\n"
+					+ "Error occured on the line: "+ sLine);
+		}
+		inputLines.add(new Line(Long.toHexString(address),splitLine,sLine));
+		return address;
 	}
 
 	private static HashMap<String, String> TAG_TO_ADDRESS = new HashMap<String, String>(); 

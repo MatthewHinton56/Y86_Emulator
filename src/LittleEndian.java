@@ -133,6 +133,8 @@ public abstract class LittleEndian {
 	}
 	
 	public static boolean[] getNibble(char hex) {
+		if(!charContains(validNibbles, hex))
+			throw new NumberFormatException("Invalid hex input: "+ hex);
 		boolean[] nibble = new boolean[4];
 		int val = 0;
 		if(Character.isLowerCase(hex)) {
@@ -169,5 +171,12 @@ public abstract class LittleEndian {
 	public LittleEndian(boolean[] bitArray) {
 		this.bitArray = bitArray.clone();
 	}
+	public static final char[] validNibbles = {'0','1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F'};
 	
+	public static boolean charContains(char[] array, char t) {
+		for(char c : array)
+			if(c == t)
+				return true;
+		return false;
+	}
 }
