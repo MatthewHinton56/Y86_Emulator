@@ -186,8 +186,10 @@ public class Compiler {
 			String sLine;
 			String line = sLine = scan.nextLine();
 			line = line.replace(",", "");
-			if(line.contains("#"))
+			if(line.contains("#")) {
 				line = line.substring(0, line.indexOf("#"));
+				sLine = sLine.substring(0, sLine.indexOf("#"));
+			}
 			int nonWhiteSpace = -1;
 			int index = 0;
 			while(nonWhiteSpace ==-1 && index < line.length()) {
@@ -233,6 +235,7 @@ public class Compiler {
 						address += 2;
 				}
 			} else {
+				
 			}
 		}
 	}

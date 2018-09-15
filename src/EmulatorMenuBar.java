@@ -11,15 +11,26 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class EmulatorMenuBar extends MenuBar {
+public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent> {
 	
+	public static final String HEX = "Hex";
+	public static final String UNSIGNED = "Unsigned";
+	public static final String SIGNED = "Signed";
+	public static final String HEXLE = "Hex LE";
+
 	public MainStage mainStage;
-	public Menu file;
+	public Menu file, options;
 	public MenuItem newButton, saveButton, loadButton;
+	public RadioMenuItem hex, unsigned, signed, hexLe;
+	public ToggleGroup group;
+	public static String displaySetting = HEX;
+	
 	public EmulatorMenuBar(MainStage mainStage) {
 		this.mainStage = mainStage;
 		file = new Menu("File");
@@ -85,10 +96,33 @@ public class EmulatorMenuBar extends MenuBar {
 						}
 		    }
 		});
+		options = new Menu("Options");
+		hex = new RadioMenuItem(HEX);
+		unsigned = new RadioMenuItem(UNSIGNED);
+		signed = new RadioMenuItem(SIGNED);
+		hexLe = new RadioMenuItem(HEXLE);
 		
+		group = new ToggleGroup();
+		hex.setToggleGroup(group);
+		unsigned.setToggleGroup(group);
+		signed.setToggleGroup(group);
+		hexLe.setToggleGroup(group);
 		
+		hex.setOnAction(this);
+		signed.setOnAction(this);
+		unsigned.setOnAction(this);
+		hexLe.setOnAction(this);
+		
+		hex.setSelected(true);
+		options.getItems().addAll(hex, signed, unsigned, hexLe);
 		file.getItems().addAll(newButton, saveButton, loadButton);
-		this.getMenus().add(file);
+		this.getMenus().addAll(file, options);
+	}
+	
+	public void handle(ActionEvent arg0) {
+		displaySetting = ((RadioMenuItem)group.getSelectedToggle()).getText();
+		if(mainStage.yotab != null) 
+			mainStage.yotab.refresh();
 	}
 	
 	

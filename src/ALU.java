@@ -68,8 +68,7 @@ public class ALU {
 	}
 	
 	public static boolean[] SUB(boolean[] a, boolean[] b) {
-		a = NOT(a);
-		a = ADDONE(a);
+		a = NEG(a);
 		boolean[] c = ADD(a,b);
 		return c;
 	}

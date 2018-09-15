@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Processor {
 
@@ -6,11 +8,17 @@ public class Processor {
 	public static Instruction currentInstruction;
 	public static DoubleWord PC;
 	public static String status = "HLT";
+	public static TreeMap<String, DoubleWord> initialRegisterFile, stepBeforeReg, stepAfterReg, finalRegisterFile;
+	public static TreeMap<Long, DoubleWord> initialMemory, stepBeforeMem, stepAfterMem, finalMemory;
+	public static boolean initialized;
+	public static Instruction completedInstruction;
+	public static String exception;
+	public static boolean exceptionGenerated;
 
 	public static void fetch() {
 		int pcInt = ((int)PC.calculateValueSigned());
 		BYTE[] instructionArray = Memory.getInstruction(pcInt);
-		currentInstruction = new Instruction(instructionArray);
+		currentInstruction = new Instruction(instructionArray, PC);
 		currentInstruction.valP = new DoubleWord(ALU.IADD(PC.bitArray, currentInstruction.standardValPIncrement.bitArray));
 		if(InstructionBuilder.getKey(Instruction.BYTE_TO_FUNCTION, currentInstruction.instruction) == null)
 			status = "INV";
@@ -23,7 +31,7 @@ public class Processor {
 		if(instruction.equals("ret") || instruction.equals("pushq") || instruction.equals("popq") || instruction.equals("call")) {
 			currentInstruction.valB = registerFile.get("%rsp");
 		}
-		if(instruction.equals("ret") || instruction.equals("popq"))
+		if(instruction.equals("ret"))
 			currentInstruction.valA = registerFile.get("%rsp");
 
 	}
@@ -99,7 +107,7 @@ public class Processor {
 				currentInstruction.valM = Memory.loadDoubleWord(address);
 				break;
 			case "popq":
-				address = currentInstruction.valA.calculateValueSigned();
+				address = currentInstruction.valB.calculateValueSigned();
 				currentInstruction.valM = Memory.loadDoubleWord(address);
 				break;
 			case "call":
@@ -107,7 +115,7 @@ public class Processor {
 				Memory.storeDoubleWord(address, currentInstruction.valP);
 				break;
 			case "ret":
-				address = currentInstruction.valA.calculateValueSigned();//since map is used, negative are allowed, rather than dealing with signed/unsigned, 
+				address = currentInstruction.valB.calculateValueSigned();//since map is used, negative are allowed, rather than dealing with signed/unsigned, 
 				//as it essentially the same value.
 				currentInstruction.valM = Memory.loadDoubleWord(address);
 				break;
@@ -168,6 +176,7 @@ public class Processor {
 			break;
 		}
 		PC = currentInstruction.valP;
+		completedInstruction = currentInstruction;
 	}
 
 	public static void initialize() {
@@ -179,6 +188,12 @@ public class Processor {
 				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
 			status = "AOK";
 			registerFile.reset();
+			Processor.initialMemory = Memory.createImage();
+			Processor.initialRegisterFile = Processor.registerFile.createImage();
+			finalMemory = stepBeforeMem = stepAfterMem = null;
+			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
+			initialized = true;
+			exceptionGenerated = false;
 		} else {
 			status = "HLT";
 		}
@@ -195,6 +210,13 @@ public class Processor {
 				pc();
 			}
 		}
+		if(status.equals("AOK")) {
+			Processor.stepAfterMem = Memory.createImage();
+			Processor.stepAfterReg = Processor.registerFile.createImage();
+		} else {
+			Processor.stepBeforeMem = Processor.finalMemory = Memory.createImage();
+			Processor.stepBeforeReg = Processor.finalRegisterFile = Processor.registerFile.createImage();
+		}
 	}
 
 	public static void run() {
@@ -203,11 +225,21 @@ public class Processor {
 			if(status.equals("AOK")) {
 				decode();
 				execute();
+				try 
+				{
 				memory();
+				} catch(MemoryException e) {
+					exception = e.getMessage();
+					exceptionGenerated = true;
+					status = "ADR";
+				}
+				
 				writeBack();
 				pc();
 			}
 		}
+		Processor.finalMemory = Memory.createImage();
+		Processor.finalRegisterFile = Processor.registerFile.createImage();
 	}
 
 	public static void clear() {

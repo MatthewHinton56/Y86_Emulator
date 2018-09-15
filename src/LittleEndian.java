@@ -1,6 +1,14 @@
 
 public abstract class LittleEndian {
 
+	@Override
+	public boolean equals(Object obj) {
+		LittleEndian le = (LittleEndian) obj;
+		if(le.bitArray.length != this.bitArray.length)
+			return false;
+		return ALU.Equal(this.bitArray, le.bitArray);
+	}
+
 	protected final boolean bitArray[];
 	
 	public long calculateValueSigned() {

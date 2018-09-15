@@ -16,9 +16,11 @@ public class Instruction {
 	String instruction;
 	boolean memory, conditionMet;
 	public boolean stop;
+	DoubleWord address;
 
 
-	public Instruction(BYTE[] instructionArray) {
+	public Instruction(BYTE[] instructionArray, DoubleWord address) {
+		this.address = address;
 		String hexFunction = instructionArray[0].generateHex();
 		instruction = BYTE_TO_FUNCTION.get(hexFunction);
 		int immediateStart = (inArray(IMMEDIATE_SPECIAL_CASE, instruction)) ? 1 : 2;
