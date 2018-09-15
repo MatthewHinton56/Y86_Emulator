@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -9,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -54,7 +52,6 @@ public class YOTab extends Tab {
 		outputDisplay.setPrefWidth(bounds.getWidth()/2);
 		outputDisplayPane = new ScrollPane(outputDisplay);
 		outputDisplayPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
 		textBorder.setBottom(outputDisplayPane);
 		textBorder.setTop(pane);
 
@@ -157,6 +154,7 @@ public class YOTab extends Tab {
 				row++;
 			}
 		}
+		
 	}
 	
 	

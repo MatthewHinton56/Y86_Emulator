@@ -1,5 +1,4 @@
-import java.util.Arrays;
-import java.util.Scanner;
+
 
 public class ALU {
 	//only ALU can set these
@@ -115,7 +114,6 @@ public class ALU {
 	// -2^(arraySize-1) <= l <= 2^(arraySize-1) -1
 	public static boolean[] longToBitArray(long l, int arraySize) {
 		long T_MIN = (long) (-1 * Math.pow(2, arraySize-1));
-		long T_MAX =  (long) (-1 + Math.pow(2, arraySize-1));
 		boolean[] c = new boolean[arraySize];
 		if(l == T_MIN) {
 			c[c.length-1] = true;
@@ -137,7 +135,6 @@ public class ALU {
 	//arraySize <= 63
 		// -2^(arraySize-1) <= l <= 2^(arraySize-1) -1
 	public static boolean[] longToBitArrayUnsigned(long l, int arraySize) {
-		long T_MAX =  (long) (-1 + Math.pow(2, arraySize));
 		boolean[] c = new boolean[arraySize];
 		for(int pos = arraySize-1; pos >= 0; pos--) {
 			long val = ((long)Math.pow(2, pos));

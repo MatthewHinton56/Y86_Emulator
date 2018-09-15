@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -88,6 +87,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 							while(scan.hasNextLine()) {
 								input+=scan.nextLine()+"\n";
 							}
+							scan.close();
 							mainStage.ystab = new YSTab(mainStage.pane,selectedFile.getName(),input,mainStage);
 			            	mainStage.pane.getTabs().add(mainStage.ystab);
 						} catch (FileNotFoundException e1) {

@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +21,6 @@ public class Compiler {
 			return "";
 		start_address = inputLines.get(0).address;
 		String output = "";
-		String offset,rB;
 		String[] instruction;
 		for(Line l: inputLines) {
 			String outputLine = "";
@@ -112,7 +109,10 @@ public class Compiler {
 			case ".align":
 				break;
 			default:
-				if(l.splitLine[0].contains("."))
+				if(l.splitLine[0].contains(":")) {
+
+				}
+				else if(l.splitLine[0].contains("."))
 					throw new IllegalArgumentException("Invalid assembler directive: " + l.splitLine[0] + "\n"
 							+ "Error occured on the line: "+ l.line);
 				else 
@@ -134,9 +134,6 @@ public class Compiler {
 					+ "Error occured on the line: "+ l.line);
 		String[] instruction;
 		if(TAG_TO_ADDRESS.containsKey(l.splitLine[1])) {
-			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
-				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
-						+ "Error occured on the line: "+ l.line);
 			dw = new DoubleWord(TAG_TO_ADDRESS.get(l.splitLine[1]),false);
 			instruction = InstructionBuilder.getInstruction(l.splitLine[0], "No register", l.splitLine[2], dw, l.line);
 			output += convertArrayToString(instruction);
@@ -178,9 +175,6 @@ public class Compiler {
 		offset = l.splitLine[2].substring(0,l.splitLine[2].indexOf("("));
 		rB = l.splitLine[2].substring(l.splitLine[2].indexOf("(")+1,l.splitLine[2].indexOf(")"));
 		if(TAG_TO_ADDRESS.containsKey(offset)) {
-			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
-				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
-						+ "Error occured on the line: "+ l.line);
 			dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
 			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[1], rB, dw, l.line);
 			output += convertArrayToString(instruction);
@@ -222,9 +216,6 @@ public class Compiler {
 		offset = l.splitLine[1].substring(0,l.splitLine[1].indexOf("("));
 		rB = l.splitLine[1].substring(l.splitLine[1].indexOf("(")+1,l.splitLine[1].indexOf(")"));
 		if(TAG_TO_ADDRESS.containsKey(offset)) {
-			if(!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
-				throw new IllegalArgumentException("Invalid instruction argument - Invalid Tag: " + l.splitLine[1] + "\n"
-						+ "Error occured on the line: "+ l.line);
 			dw = new DoubleWord(TAG_TO_ADDRESS.get(offset),false);
 			instruction = InstructionBuilder.getInstruction(l.splitLine[0], l.splitLine[2], rB, dw, l.line);
 			output += convertArrayToString(instruction);
@@ -343,6 +334,7 @@ public class Compiler {
 
 			}
 		}
+		scan.close();
 	}
 
 

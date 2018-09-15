@@ -1,5 +1,4 @@
-import java.math.BigInteger;
-import java.util.Arrays;
+
 
 public class DoubleWord extends LittleEndian{
 	

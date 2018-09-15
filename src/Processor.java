@@ -1,5 +1,3 @@
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 public class Processor {
@@ -227,15 +225,16 @@ public class Processor {
 				execute();
 				try 
 				{
-				memory();
+					memory();
 				} catch(MemoryException e) {
 					exception = e.getMessage();
 					exceptionGenerated = true;
 					status = "ADR";
 				}
-				
-				writeBack();
-				pc();
+				if(status.equals("AOK")) {
+					writeBack();
+					pc();
+				}
 			}
 		}
 		Processor.finalMemory = Memory.createImage();
