@@ -179,6 +179,7 @@ public class Processor {
 
 	public static void initialize() {
 		if(Compiler.compiled) {
+			Memory.memory.clear();
 			Processor.PC = new DoubleWord(Long.parseLong(Compiler.start_address,16));
 			for(long l: Compiler.COMPILED_CONSTANTS.keySet())
 				Memory.storeDoubleWord(l, Compiler.COMPILED_CONSTANTS.get(l));
@@ -199,6 +200,8 @@ public class Processor {
 
 	public static void step() {
 		if(status.equals("AOK")) {
+			Processor.stepBeforeMem = Memory.createImage();
+			Processor.stepBeforeReg = Processor.registerFile.createImage();
 			fetch();
 			if(status.equals("AOK")) {
 				decode();
