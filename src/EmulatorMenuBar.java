@@ -36,7 +36,7 @@ public class EmulatorMenuBar extends MenuBar {
 		        // Traditional way to get the response value.
 		        Optional<String> result = dialog.showAndWait();
 		        if (result.isPresent()){
-		            	mainStage.ystab = new YSTab(mainStage.pane,result.get(),"",mainStage);
+		            	mainStage.ystab = new YSTab(mainStage.pane,result.get() +".ys","",mainStage);
 		            	mainStage.pane.getTabs().add(mainStage.ystab);
 		        }
 		    }

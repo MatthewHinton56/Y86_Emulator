@@ -35,10 +35,21 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 	@Override
 	public void handle(ActionEvent arg0) {
 		String input = ystab.area.getText();
-		String output = Compiler.compile(input);
+		ystab.output.setText("Compiler Output:\n");
+		String output;
+		try {
+		output = Compiler.compile(input, ystab.output);
+		ystab.output.setText(ystab.output.getText() + "\n Assembly compiled and ready for emulation in yotab" );
+		
+		Processor.clear();
 		pane.getTabs().remove(yotab);
-		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".yo",output);
+		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".o", output);
+		yotab.refresh();
 		pane.getTabs().add(yotab);
+		}
+		catch(IllegalArgumentException e) {
+			ystab.output.setText(ystab.output.getText() + "Compiler Output:\n" + e.getMessage());
+		}
 	}
 
 	public static void main(String[] args) {

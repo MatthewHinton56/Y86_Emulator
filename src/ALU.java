@@ -151,27 +151,16 @@ public class ALU {
 	}
 	
 	
-	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		while(true) {
-		System.out.print("valA: ");
-		int valA = scan.nextInt();
-		System.out.print("valB: ");
-		int valB = scan.nextInt();
-		boolean[] a = longToBitArray(valA,8);
-		System.out.println(Arrays.toString(a));
-		boolean[] b = longToBitArray(valB,8);
-		System.out.println(Arrays.toString(b));
-		boolean[] c = AND(a,b);
-		BYTE byt = new BYTE(c);
-		System.out.println(Arrays.toString(c));
-		System.out.println(byt.generateHex());
-		System.out.println(byt.generateBitString());
-		System.out.println(byt.calculateValueUnSigned());
-		System.out.println("SF:" + SF);
-		System.out.println("OF:" + OF);
-		System.out.println("ZF:" + ZF);
-		}
+	public static boolean[] NEG(boolean[] a) {
+		return ADDONE(NOT(a));
+	}
+
+	public static boolean[] ABS(boolean[] a) {
+		return (isNeg(a)) ? NEG(a) : a;
+	}
+
+	public static boolean isNeg(boolean[] a) {
+		return a[a.length-1];
 	}
 
 	public static boolean ZF() {

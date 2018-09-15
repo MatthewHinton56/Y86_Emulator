@@ -14,7 +14,6 @@ public class Processor {
 		currentInstruction.valP = new DoubleWord(ALU.IADD(PC.bitArray, currentInstruction.standardValPIncrement.bitArray));
 		if(InstructionBuilder.getKey(Instruction.BYTE_TO_FUNCTION, currentInstruction.instruction) == null)
 			status = "INV";
-		//System.out.println(currentInstruction.instruction);
 	}
 
 	public static void decode() {
@@ -207,11 +206,15 @@ public class Processor {
 				memory();
 				writeBack();
 				pc();
-				//System.out.println(registerFile.get("%rdx"));
-				//System.out.println(registerFile.get("%rsp"));
-				//System.out.println(PC.calculateValueSigned());
 			}
 		}
+	}
+
+	public static void clear() {
+		Memory.memory.clear();
+		status = "HLT";
+		registerFile.reset();
+		Processor.PC = new DoubleWord(0);
 	}
 
 }
