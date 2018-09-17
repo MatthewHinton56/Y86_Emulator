@@ -11,6 +11,7 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 	public YSTab ystab;
 	public YOTab yotab;
 	public TabPane pane;
+	public EmulatorMenuBar emb;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
@@ -18,7 +19,7 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		//ystab = new YSTab(pane,"test","",this);
 		//pane.getTabs().add(ystab);
 		//Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-		EmulatorMenuBar emb = new EmulatorMenuBar(this);
+		emb = new EmulatorMenuBar(this);
 		BorderPane border = new BorderPane();
 		border.setTop(emb);
 		border.setCenter(pane);
@@ -45,7 +46,7 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		
 		Processor.clear();
 		pane.getTabs().remove(yotab);
-		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".o", output);
+		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".o", output, emb);
 		yotab.refresh();
 		pane.getTabs().add(yotab);
 		}

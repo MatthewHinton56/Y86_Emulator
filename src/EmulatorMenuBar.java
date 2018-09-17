@@ -29,6 +29,10 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 	public RadioMenuItem hex, unsigned, signed, hexLe;
 	public ToggleGroup group;
 	public static String displaySetting = HEX;
+	//IF length is not stored, array is terminated with zero, and all other values will not be zero.
+	public RadioMenuItem RDI_Input, RSI_Input, store_RDI_Length_RDX, store_RSI_Length_RCX;
+	public Menu parameters, RDI_Settings, RSI_Settings, RDI_Length, RSI_Length;//Array can be between 0 and 30 elements.
+	public ToggleGroup RDIGroup, RSIGroup;
 	
 	public EmulatorMenuBar(MainStage mainStage) {
 		this.mainStage = mainStage;
@@ -113,12 +117,50 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		unsigned.setOnAction(this);
 		hexLe.setOnAction(this);
 		
+		constructParameterOptions();
+		
 		hex.setSelected(true);
 		options.getItems().addAll(hex, signed, unsigned, hexLe);
 		file.getItems().addAll(newButton, saveButton, loadButton);
-		this.getMenus().addAll(file, options);
+		this.getMenus().addAll(file, options, parameters);
 	}
 	
+	private void constructParameterOptions() {
+		parameters = new Menu("Parameters");
+		RDI_Settings = new Menu("RDI Settings");
+		RDI_Input = new RadioMenuItem("RDI On");
+		RDI_Length = new Menu("Select Length");
+		RDIGroup = new ToggleGroup();
+		for(int i = 0; i <= 30; i++) {
+			RadioMenuItem lengthOption = new RadioMenuItem(i+"");
+			lengthOption.setToggleGroup(RDIGroup);
+			if(i == 1)
+				lengthOption.setSelected(true);
+			RDI_Length.getItems().add(lengthOption);
+		}
+		store_RDI_Length_RDX = new RadioMenuItem("Store length of RDI in RDX");
+		store_RDI_Length_RDX.setSelected(true);
+		
+		RDI_Settings.getItems().addAll(RDI_Input, RDI_Length, store_RDI_Length_RDX);
+		
+		RSI_Settings = new Menu("RSI Settings");
+		RSI_Input = new RadioMenuItem("RSI On");
+		RSI_Length = new Menu("Select Length");
+		RSIGroup = new ToggleGroup();
+		for(int i = 0; i <= 30; i++) {
+			RadioMenuItem lengthOption = new RadioMenuItem(i+"");
+			lengthOption.setToggleGroup(RSIGroup);
+			if(i == 1)
+				lengthOption.setSelected(true);
+			RSI_Length.getItems().add(lengthOption);
+		}
+		store_RSI_Length_RCX = new RadioMenuItem("Store length of RSI in RCX");
+		store_RSI_Length_RCX.setSelected(true);
+		
+		RSI_Settings.getItems().addAll(RSI_Input, RSI_Length, store_RSI_Length_RCX);
+		parameters.getItems().addAll(RDI_Settings, RSI_Settings);
+	}
+
 	public void handle(ActionEvent arg0) {
 		displaySetting = ((RadioMenuItem)group.getSelectedToggle()).getText();
 		if(mainStage.yotab != null) 

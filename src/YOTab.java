@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -34,7 +35,8 @@ public class YOTab extends Tab {
 	private ScrollPane outputDisplayPane;
 	private GridPane memDisplay;
 	private ScrollPane memDisplayScrollPane;
-	public YOTab(TabPane parent, String fileName, String inputText) {
+	private EmulatorMenuBar emb;
+	public YOTab(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
 		this.parent = parent;
 		border = new BorderPane();
 		textBorder = new BorderPane();
@@ -66,7 +68,12 @@ public class YOTab extends Tab {
 		initialize.setPrefWidth(100);
 		initialize.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Processor.initialize();
+				if(emb.RDI_Input.isSelected() || emb.RSI_Input.isSelected())
+					Processor.initialize(emb.RDI_Input.isSelected(),((RadioMenuItem)emb.RDIGroup.getSelectedToggle()).getText()
+							,emb.store_RDI_Length_RDX.isSelected(), emb.RSI_Input.isSelected(),((RadioMenuItem)emb.RSIGroup.getSelectedToggle()).getText()
+							,emb.store_RSI_Length_RCX.isSelected());
+				else 
+					Processor.initialize();
 				refresh();
 				initializeDisplay();
 			}
@@ -105,7 +112,7 @@ public class YOTab extends Tab {
 		border.setLeft(textBorder);
 		border.setRight(displayPane);
 		border.setCenter(memDisplayScrollPane);
-
+		this.emb = emb;
 		this.setContent(border);
 		this.setText(fileName);
 	}
@@ -146,6 +153,8 @@ public class YOTab extends Tab {
 		Set<Long> usedAddresses = new HashSet<Long>();
 		for(long address: Memory.memory.keySet()) {
 			long modifiedAddress = address - address%8;
+			if(address < 0)
+				modifiedAddress = address - ((8 + address%8)%8);
 			if(!usedAddresses.contains(modifiedAddress)) {
 				usedAddresses.add(modifiedAddress);	
 				LittleEndian value = Memory.loadDoubleWord(modifiedAddress);
@@ -229,6 +238,8 @@ public class YOTab extends Tab {
 		Set<Long> usedAddresses = new HashSet<Long>();
 		for(long address: Memory.memory.keySet()) {
 			long modifiedAddress = address - address%8;
+			if(address < 0)
+				modifiedAddress = address - ((8 + address%8)%8);
 			if(!usedAddresses.contains(modifiedAddress)) {
 				usedAddresses.add(modifiedAddress);	
 				output +=  "0x" + Long.toString(address, 16)+ " = " + displayText(Memory.loadDoubleWord(modifiedAddress))+ "\n";

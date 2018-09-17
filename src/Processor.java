@@ -193,6 +193,7 @@ public class Processor {
 			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
 			initialized = true;
 			exceptionGenerated = false;
+			Memory.accessibleMemory.clear();
 		} else {
 			status = "HLT";
 		}
@@ -249,6 +250,54 @@ public class Processor {
 		status = "HLT";
 		registerFile.reset();
 		Processor.PC = new DoubleWord(0);
+		Memory.accessibleMemory.clear();
+	}
+
+	public static void initialize(boolean RDI_Selected, String RDI_Length, boolean place_RDI_length_in_RDX, boolean RSI_Selected, String RSI_Length,
+			boolean place_RSI_length_in_RCX) {
+		if(Compiler.compiled) {
+			Memory.memory.clear();
+			Processor.PC = new DoubleWord(Long.parseLong(Compiler.start_address,16));
+			for(long l: Compiler.COMPILED_CONSTANTS.keySet())
+				Memory.storeDoubleWord(l, Compiler.COMPILED_CONSTANTS.get(l));
+			for(long l: Compiler.COMPILED_INSTRUCTIONS.keySet())
+				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
+			status = "AOK";
+			registerFile.reset();
+			initialized = true;
+			Memory.accessibleMemory.clear();
+			initializeInputs(RDI_Selected, RDI_Length, place_RDI_length_in_RDX, RSI_Selected, RSI_Length, place_RSI_length_in_RCX);
+			Processor.initialMemory = Memory.createImage();
+			Processor.initialRegisterFile = Processor.registerFile.createImage();
+			finalMemory = stepBeforeMem = stepAfterMem = null;
+			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
+			exceptionGenerated = false;
+		} else {
+			status = "HLT";
+		}
+	}
+
+	private static void initializeInputs(boolean RDI_Selected, String RDI_Length, boolean place_RDI_length_in_RDX, boolean RSI_Selected, String RSI_Length,
+			boolean place_RSI_length_in_RCX) {
+		initialize();
+
+		if(Processor.initialized) {
+			long rdiLength = Long.parseLong(RDI_Length);
+			if(RDI_Selected)
+				Memory.priorityStore(Memory.RDI_POSITION, rdiLength, !place_RDI_length_in_RDX);
+			if(RDI_Selected && place_RDI_length_in_RDX)
+				Processor.registerFile.put("%rdx", new DoubleWord(rdiLength));
+			if(RDI_Selected)
+				Processor.registerFile.put("%rdi", new DoubleWord(Memory.RDI_POSITION));
+			long rsiLength = Long.parseLong(RSI_Length);
+			if(RSI_Selected)
+				Memory.priorityStore(Memory.RSI_POSITION, rsiLength, !place_RSI_length_in_RCX);
+			if(RSI_Selected && place_RSI_length_in_RCX)
+				Processor.registerFile.put("%rcx", new DoubleWord(rsiLength));
+			if(RSI_Selected)
+				Processor.registerFile.put("%rsi", new DoubleWord(Memory.RSI_POSITION));
+		}
+		
 	}
 
 }

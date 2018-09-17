@@ -367,7 +367,8 @@ public class Compiler {
 			throw new IllegalArgumentException("Invalid assembler directive argument - .align requires an address argument.\n"
 					+ "Error occured on the line: "+ sLine);
 		try {
-			address = address + address%Integer.parseInt(splitLine[1]);
+			long offset = Integer.parseInt(splitLine[1]);
+			address = address + (offset - address%offset);
 		} catch(NumberFormatException e) {
 			throw new IllegalArgumentException("Invalid assembler directive argument - Invalid Integer argument: "+ splitLine[1]+" for .align.\n"
 					+ "Error occured on the line: "+ sLine);
