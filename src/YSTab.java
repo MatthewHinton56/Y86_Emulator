@@ -1,4 +1,5 @@
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
@@ -48,6 +49,16 @@ public class YSTab extends Tab {
 		border.setRight(outputDisplayPane);
 		this.setContent(border);
 		this.setText(fileName);
+		this.setOnCloseRequest(new EventHandler<Event>()
+		{
+		    @Override
+		    public void handle(Event arg0) 
+		    {
+		        ((MainStage)handler).ystab = null;
+		    }
+		});
+		
+		
 	}
 	
 }
