@@ -35,7 +35,6 @@ public class YOTab extends Tab {
 	private ScrollPane outputDisplayPane;
 	private GridPane memDisplay;
 	private ScrollPane memDisplayScrollPane;
-	private EmulatorMenuBar emb;
 	public YOTab(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
 		this.parent = parent;
 		border = new BorderPane();
@@ -112,7 +111,6 @@ public class YOTab extends Tab {
 		border.setLeft(textBorder);
 		border.setRight(displayPane);
 		border.setCenter(memDisplayScrollPane);
-		this.emb = emb;
 		this.setContent(border);
 		this.setText(fileName);
 	}

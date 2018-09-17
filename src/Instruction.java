@@ -28,7 +28,7 @@ public class Instruction {
 		int immediateStart = (inArray(IMMEDIATE_SPECIAL_CASE, instruction)) ? 1 : 2;
 		String hexRegister = null;
 		try {
-		 hexRegister = instructionArray[1].generateHex();
+			hexRegister = instructionArray[1].generateHex();
 		}
 		catch(NullPointerException e) {
 			System.out.println(Arrays.toString(instructionArray));
@@ -55,34 +55,34 @@ public class Instruction {
 
 
 	private static void generateInstructionArchetypes() {
-		INSTRUCTION_TO_ARCHETYPE.put("HALT", "halt");
-		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
-		INSTRUCTION_TO_ARCHETYPE.put("CALL", "call Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
-		INSTRUCTION_TO_ARCHETYPE.put("NOP", "nop");
-		INSTRUCTION_TO_ARCHETYPE.put("RRMOVQ", "rrmovq rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVLE", "cmovle rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVL", "cmovl rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVE", "cmove rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVNE", "cmovne rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVGE", "cmovge rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("CMOVG", "cmovg rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("IRMOVQ", "irmovq V, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("RMMOVQ", "rmmovq rA, D(rB)");
-		INSTRUCTION_TO_ARCHETYPE.put("MRMOVQ", "mrmovq D(rB), rA");
-		INSTRUCTION_TO_ARCHETYPE.put("ADDQ", "addq rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("SUBQ", "subq rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("XORQ", "xorq rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("ANDQ", "andq rA, rB");
-		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
-		INSTRUCTION_TO_ARCHETYPE.put("JLE", "jle Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("JL", "jl Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("JE", "je Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("JNE", "jne Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("JGE", "jge Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("JG", "jg Dest");
-		INSTRUCTION_TO_ARCHETYPE.put("PUSHQ", "pushq rA");
-		INSTRUCTION_TO_ARCHETYPE.put("POPQ", "cmovge rA");
+		INSTRUCTION_TO_ARCHETYPE.put("halt", "halt");
+		INSTRUCTION_TO_ARCHETYPE.put("ret", "ret");
+		INSTRUCTION_TO_ARCHETYPE.put("call", "call Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("ret", "ret");
+		INSTRUCTION_TO_ARCHETYPE.put("nop", "nop");
+		INSTRUCTION_TO_ARCHETYPE.put("rrmovq", "rrmovq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmovle", "cmovle rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmovl", "cmovl rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmove", "cmove rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmovne", "cmovne rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmovge", "cmovge rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("cmovg", "cmovg rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("irmovq", "irmovq V, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("rmmovq", "rmmovq rA, D(rB)");
+		INSTRUCTION_TO_ARCHETYPE.put("rrmovq", "rmmovq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("mrmovq", "mrmovq D(rB), rA");
+		INSTRUCTION_TO_ARCHETYPE.put("addq", "addq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("subq", "subq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("xorq", "xorq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("andq", "andq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("jle", "jle Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("jl", "jl Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("je", "je Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("jne", "jne Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("jge", "jge Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("jg", "jg Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("pushq", "pushq rA");
+		INSTRUCTION_TO_ARCHETYPE.put("popq", "cmovge rA");
 	}
 
 
@@ -148,11 +148,16 @@ public class Instruction {
 
 	public String buildDisplayInstruction() {
 		String archetype = Instruction.INSTRUCTION_TO_ARCHETYPE.get(instruction);
-		archetype = archetype.replace("rA", this.rA);
-		archetype = archetype.replace("rB", this.rB);
-		archetype = archetype.replace("Dest", this.immediate.displayToString());
-		archetype = archetype.replace("D", this.immediate.displayToString());
-		archetype = archetype.replace("V", this.immediate.displayToString());
+		if(this.rA != null)
+			archetype = archetype.replace("rA", this.rA);
+		if(this.rB != null)
+			archetype = archetype.replace("rB", this.rB);
+		if(this.immediate != null)
+			archetype = archetype.replace("Dest", "0x"+this.immediate.displayToString());
+		if(this.immediate != null)
+			archetype = archetype.replace("D", "0x"+this.immediate.displayToString());
+		if(this.immediate != null)
+			archetype = archetype.replace("V", "0x"+this.immediate.displayToString());
 		return archetype;
 	}
 }
