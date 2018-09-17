@@ -5,8 +5,10 @@ public class Instruction {
 
 	public static final HashMap<String, String> BYTE_TO_FUNCTION = new HashMap<String, String>();
 	public static final HashMap<String, String> NIBBLE_TO_REGISTER = new HashMap<String, String>();
+	public static final HashMap<String, String> INSTRUCTION_TO_ARCHETYPE = new HashMap<String, String>();
 	static {
 		generateMaps();
+		generateInstructionArchetypes();
 	}
 
 	DoubleWord immediate;
@@ -47,6 +49,40 @@ public class Instruction {
 		else 
 			standardValPIncrement = new DoubleWord(2);
 		conditionMet = true;
+	}
+
+
+
+
+	private static void generateInstructionArchetypes() {
+		INSTRUCTION_TO_ARCHETYPE.put("HALT", "halt");
+		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
+		INSTRUCTION_TO_ARCHETYPE.put("CALL", "call Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
+		INSTRUCTION_TO_ARCHETYPE.put("NOP", "nop");
+		INSTRUCTION_TO_ARCHETYPE.put("RRMOVQ", "rrmovq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVLE", "cmovle rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVL", "cmovl rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVE", "cmove rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVNE", "cmovne rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVGE", "cmovge rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("CMOVG", "cmovg rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("IRMOVQ", "irmovq V, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("RMMOVQ", "rmmovq rA, D(rB)");
+		INSTRUCTION_TO_ARCHETYPE.put("MRMOVQ", "mrmovq D(rB), rA");
+		INSTRUCTION_TO_ARCHETYPE.put("ADDQ", "addq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("SUBQ", "subq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("XORQ", "xorq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("ANDQ", "andq rA, rB");
+		INSTRUCTION_TO_ARCHETYPE.put("RET", "ret");
+		INSTRUCTION_TO_ARCHETYPE.put("JLE", "jle Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("JL", "jl Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("JE", "je Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("JNE", "jne Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("JGE", "jge Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("JG", "jg Dest");
+		INSTRUCTION_TO_ARCHETYPE.put("PUSHQ", "pushq rA");
+		INSTRUCTION_TO_ARCHETYPE.put("POPQ", "cmovge rA");
 	}
 
 
@@ -108,4 +144,15 @@ public class Instruction {
 
 	public static final String[] IMMEDIATE_SPECIAL_CASE = {"call", "jmp", "jge", "jg", "je", "jne", "jl", "jle"}; 
 	public static final String[] MEMORY_FUNCTIONS = {"rmmovq","mrmovq", "call", "ret", "popq","pushq"};
+
+
+	public String buildDisplayInstruction() {
+		String archetype = Instruction.INSTRUCTION_TO_ARCHETYPE.get(instruction);
+		archetype = archetype.replace("rA", this.rA);
+		archetype = archetype.replace("rB", this.rB);
+		archetype = archetype.replace("Dest", this.immediate.displayToString());
+		archetype = archetype.replace("D", this.immediate.displayToString());
+		archetype = archetype.replace("V", this.immediate.displayToString());
+		return archetype;
+	}
 }

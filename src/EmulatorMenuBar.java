@@ -33,6 +33,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 	public RadioMenuItem RDI_Input, RSI_Input, store_RDI_Length_RDX, store_RSI_Length_RCX;
 	public Menu parameters, RDI_Settings, RSI_Settings, RDI_Length, RSI_Length;//Array can be between 0 and 30 elements.
 	public ToggleGroup RDIGroup, RSIGroup;
+	private Menu instructions;
 	
 	public EmulatorMenuBar(MainStage mainStage) {
 		this.mainStage = mainStage;
@@ -119,10 +120,17 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		
 		constructParameterOptions();
 		
+		instructions = new Menu("Instructions");
+		for(String instruction: Instruction.INSTRUCTION_TO_ARCHETYPE.keySet()) {
+			MenuItem item = new MenuItem(instruction);
+			item.setOnAction(this);
+			instructions.getItems().add(item);
+		}
+		
 		hex.setSelected(true);
 		options.getItems().addAll(hex, signed, unsigned, hexLe);
 		file.getItems().addAll(newButton, saveButton, loadButton);
-		this.getMenus().addAll(file, options, parameters);
+		this.getMenus().addAll(file, options,instructions, parameters);
 	}
 	
 	private void constructParameterOptions() {
@@ -165,6 +173,11 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		displaySetting = ((RadioMenuItem)group.getSelectedToggle()).getText();
 		if(mainStage.yotab != null) 
 			mainStage.yotab.refresh();
+		if(mainStage.ystab != null && arg0.getSource() instanceof MenuItem && !(arg0.getSource() instanceof RadioMenuItem)) {
+			MenuItem item = (MenuItem)arg0.getSource();
+				String archetype = Instruction.INSTRUCTION_TO_ARCHETYPE.get(item.getText());
+				mainStage.ystab.area.setText(mainStage.ystab.area.getText()+archetype+"\n");
+		}
 	}
 	
 	

@@ -177,7 +177,7 @@ public class YOTab extends Tab {
 				else {
 					outputDisplay.setText(outputDisplay.getText() + "The program has completed its execution:\n");
 					outputDisplay.setText(outputDisplay.getText() + "PC: " + displayText(Processor.PC) + "\n");
-					//outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: " + Processor.completedInstruction.buildDisplayInstruction() +"\n");
+					outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: " + Processor.completedInstruction.buildDisplayInstruction() +"\n");
 					outputDisplay.setText(outputDisplay.getText() + registerDisplay());
 					outputDisplay.setText(outputDisplay.getText() + memoryDisplay());
 					outputDisplay.setText(outputDisplay.getText() + registerDifference(Processor.initialRegisterFile, Processor.finalRegisterFile, "FINAL"));
@@ -185,7 +185,7 @@ public class YOTab extends Tab {
 				}
 			} else {
 				outputDisplay.setText(outputDisplay.getText() + "PC: " + displayText(Processor.completedInstruction.address) + "\n");
-				//outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: " + Processor.completedInstruction.buildDisplayInstruction() +"\n");
+				outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: " + Processor.completedInstruction.buildDisplayInstruction() +"\n");
 				outputDisplay.setText(outputDisplay.getText() + registerDifference(Processor.stepBeforeReg, Processor.stepAfterReg, "STEP"));
 				outputDisplay.setText(outputDisplay.getText() + memoryDifference(Processor.stepBeforeMem, Processor.stepAfterMem, "STEP"));
 			}
