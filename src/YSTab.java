@@ -32,7 +32,7 @@ public class YSTab extends Tab {
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 		area.setPrefHeight(bounds.getHeight()-175);
 		area.setPrefWidth(bounds.getWidth());
-		output.setMinWidth(bounds.getWidth()/3);
+		output.setPrefWidth(bounds.getWidth()/4);
 		pane = new ScrollPane(area);
 		pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		outputDisplayPane = new ScrollPane(output);
