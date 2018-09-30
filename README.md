@@ -59,3 +59,11 @@ Step causes the next instruction the program counter points to to execute
 
 ### Run
 Runs the program until either a halt is encountered, or an error is generated
+
+## Binaries 
+
+| System | Option 1 | Option 2 | 
+| -------|----------|----------|
+| Windows | [exe](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/1.0/Y86_Emulator.exe "Y86_Emulator.exe") | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/1.0/Y86_Emulator.jar "Y86_Emulator.jar") |
+| Mac | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/1.0/Y86_Emulator.jar "Y86_Emulator.jar") | 
+| Linux | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/1.0/Y86_Emulator.jar "Y86_Emulator.jar") | 
