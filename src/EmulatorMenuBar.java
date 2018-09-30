@@ -102,7 +102,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 				}
 			}
 		});
-		options = new Menu("Options");
+		options = new Menu("Data Display");
 		hex = new RadioMenuItem(HEX);
 		unsigned = new RadioMenuItem(UNSIGNED);
 		signed = new RadioMenuItem(SIGNED);
@@ -129,7 +129,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		}
 
 		hex.setSelected(true);
-		options.getItems().addAll(hex, signed, unsigned, hexLe);
+		options.getItems().addAll(hex, hexLe, signed, unsigned);
 		file.getItems().addAll(newButton, saveButton, loadButton);
 		this.getMenus().addAll(file, options,instructions, parameters);
 	}
