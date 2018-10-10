@@ -187,7 +187,6 @@ public class Processor {
 				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
 			status = "AOK";
 			registerFile.reset();
-			ALU.resetCC();
 			Processor.initialMemory = Memory.createImage();
 			Processor.initialRegisterFile = Processor.registerFile.createImage();
 			finalMemory = stepBeforeMem = stepAfterMem = null;
@@ -248,7 +247,6 @@ public class Processor {
 
 	public static void clear() {
 		Memory.memory.clear();
-		ALU.resetCC();
 		status = "HLT";
 		registerFile.reset();
 		Processor.PC = new DoubleWord(0);
