@@ -3,6 +3,7 @@
 public class ALU {
 	//only ALU can set these
 	private static boolean ZF, SF, OF;
+	private static boolean BASE_VALUE = false;
 	
 	//a.length ==  b.length
 	public static boolean[] AND(boolean[] a, boolean[] b) {
@@ -173,5 +174,11 @@ public class ALU {
 	}
 	
 	public static boolean[] NEGATIVE_EIGHT = longToBitArray(-8, 64);
+	
+	public static void resetCC() {
+		ZF = BASE_VALUE;
+		SF = BASE_VALUE;
+		OF = BASE_VALUE;
+	}
 	
 }
