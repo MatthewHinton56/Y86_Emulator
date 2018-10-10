@@ -187,6 +187,7 @@ public class Processor {
 				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
 			status = "AOK";
 			registerFile.reset();
+			ALU.resetCC();
 			Processor.initialMemory = Memory.createImage();
 			Processor.initialRegisterFile = Processor.registerFile.createImage();
 			finalMemory = stepBeforeMem = stepAfterMem = null;
@@ -249,6 +250,7 @@ public class Processor {
 		Memory.memory.clear();
 		status = "HLT";
 		registerFile.reset();
+		ALU.resetCC();
 		Processor.PC = new DoubleWord(0);
 		Memory.accessibleMemory.clear();
 	}
@@ -264,6 +266,7 @@ public class Processor {
 				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
 			status = "AOK";
 			registerFile.reset();
+			ALU.resetCC();
 			initialized = true;
 			Memory.accessibleMemory.clear();
 			initializeInputs(RDI_Selected, RDI_Length, place_RDI_length_in_RDX, RSI_Selected, RSI_Length, place_RSI_length_in_RCX);
