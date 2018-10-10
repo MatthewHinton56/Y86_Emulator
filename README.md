@@ -64,7 +64,7 @@ Runs the program until either a halt is encountered, or an error is generated
 
 | System | Option 1 | Option 2 | 
 | -------|----------|----------|
-| Windows  [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.1/Y86_Emulator.jar "Y86_Emulator.jar") |
+| Windows | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.1/Y86_Emulator.jar "Y86_Emulator.jar") |
 | Mac | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.1/Y86_Emulator.jar "Y86_Emulator.jar") | 
 | Linux | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.1/Y86_Emulator.jar "Y86_Emulator.jar") | 
 
