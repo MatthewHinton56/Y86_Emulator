@@ -172,6 +172,8 @@ public class Processor {
 		case "jg":
 			currentInstruction.valP = (currentInstruction.conditionMet) ? currentInstruction.immediate : currentInstruction.valP;
 			break;
+		case "halt":
+			currentInstruction.valP = PC;
 		}
 		PC = currentInstruction.valP;
 		completedInstruction = currentInstruction;
@@ -204,13 +206,29 @@ public class Processor {
 		if(status.equals("AOK")) {
 			Processor.stepBeforeMem = Memory.createImage();
 			Processor.stepBeforeReg = Processor.registerFile.createImage();
-			fetch();
+			try 
+			{
+				fetch();
+			} catch(MemoryException e) {
+				exception = e.getMessage();
+				exceptionGenerated = true;
+				status = "ADR";
+			}
 			if(status.equals("AOK")) {
 				decode();
 				execute();
-				memory();
-				writeBack();
-				pc();
+				try 
+				{
+					memory();
+				} catch(MemoryException e) {
+					exception = e.getMessage();
+					exceptionGenerated = true;
+					status = "ADR";
+				}
+				if(status.equals("AOK")) {
+					writeBack();
+					pc();
+				}
 			}
 		}
 		if(status.equals("AOK")) {
@@ -224,7 +242,14 @@ public class Processor {
 
 	public static void run() {
 		while(status.equals("AOK")) {
-			fetch();
+			try 
+			{
+				fetch();
+			} catch(MemoryException e) {
+				exception = e.getMessage();
+				exceptionGenerated = true;
+				status = "ADR";
+			}
 			if(status.equals("AOK")) {
 				decode();
 				execute();

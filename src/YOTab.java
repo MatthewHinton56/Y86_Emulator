@@ -169,7 +169,7 @@ public class YOTab extends Tab {
 	protected void stepDisplay() {
 		if(Processor.initialized) {
 			outputDisplay.setText(outputDisplay.getText() + "STEP:\n");
-			if(Processor.status.equals("HLT")) {
+			if(!Processor.status.equals("AOK")) {
 				if(Processor.exceptionGenerated)
 					outputDisplay.setText(outputDisplay.getText() + "The processor exited with:\n" + Processor.exception+"\n");
 				else {

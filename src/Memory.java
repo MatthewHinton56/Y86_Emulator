@@ -19,8 +19,8 @@ public class Memory {
 		for(Long i = position; i < position + 10; i++) {
 			BYTE instruct = memory.get(i);
 			if(instruct == null)
-				memory.put(i, BYTE.randomBYTE());
-			instructionArray[(int) (i-position)] =  memory.get(i);
+				instruct = new BYTE("00");
+			instructionArray[(int) (i-position)] =  instruct;
 		}
 		return instructionArray;
 	}

@@ -1,7 +1,14 @@
 
-
+/**
+ * Provides ALU functionality to the Y86 processor emulator
+ * Uses logical operations to simulate the ALU
+ * @author Matthew Hinton
+ *
+ */
 public class ALU {
-	//only ALU can set these
+	/**
+	 * Serves as the condition codes for the ALU
+	 */
 	private static boolean ZF, SF, OF;
 	private static boolean BASE_VALUE = false;
 	
