@@ -240,7 +240,7 @@ public class YOTab extends Tab {
 				modifiedAddress = address - ((8 + address%8)%8);
 			if(!usedAddresses.contains(modifiedAddress)) {
 				usedAddresses.add(modifiedAddress);	
-				output +=  "0x" + Long.toString(address, 16)+ " = " + displayText(Memory.loadDoubleWord(modifiedAddress))+ "\n";
+				output +=  "0x" + Long.toUnsignedString(address, 16)+ " = " + displayText(Memory.loadDoubleWord(modifiedAddress))+ "\n";
 			}
 		}
 		return output+"\n";

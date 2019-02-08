@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -7,7 +8,14 @@ import java.util.TreeMap;
 
 public class Memory {
 	//Any negative long is considered secured memory, and the program must have permission to write to it
-	public static final HashMap<Long,BYTE> memory = new HashMap<Long,BYTE>();
+	public static final TreeMap<Long,BYTE> memory = new TreeMap<Long,BYTE>(new Comparator<Long>() {
+
+		@Override
+		public int compare(Long arg0, Long arg1) {
+			return Long.compareUnsigned(arg0, arg1);
+		}
+		
+	});
 	public static final HashSet<Long> accessibleMemory = new HashSet<Long>();
 	public static final Long RDI_POSITION = 0xA000000000000000L;
 	public static final Long RSI_POSITION = 0xB000000000000000L;

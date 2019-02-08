@@ -177,6 +177,8 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		if(mainStage.ystab != null && arg0.getSource() instanceof MenuItem && !(arg0.getSource() instanceof RadioMenuItem)) {
 			MenuItem item = (MenuItem)arg0.getSource();
 			String archetype = Instruction.INSTRUCTION_TO_ARCHETYPE.get(item.getText());
+			if(!mainStage.ystab.area.getText().endsWith("\n"))
+				mainStage.ystab.area.setText(mainStage.ystab.area.getText()+"\n");
 			mainStage.ystab.area.setText(mainStage.ystab.area.getText()+archetype+"\n");
 		}
 	}
