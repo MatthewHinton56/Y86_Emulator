@@ -80,12 +80,6 @@ public class ALU {
 		return c;
 	}
 	
-	public static boolean[] ADDFOUR(boolean[] a) {
-		boolean[] b = new boolean[a.length];
-		b[2] = true;
-		return IADD(a,b);
-	}
-	
 	public static boolean[] INCREMENTEIGHT(boolean[] a) {
 		boolean[] b = new boolean[a.length];
 		b[3] = true;
@@ -98,7 +92,7 @@ public class ALU {
 	}
 	
 	
-	public static boolean[] ADDONE(boolean[] a) {
+	private static boolean[] ADDONE(boolean[] a) {
 		boolean[] b = new boolean[a.length];
 		b[0] = true;
 		return IADD(a,b);
@@ -155,15 +149,15 @@ public class ALU {
 	}
 	
 	
-	public static boolean[] NEG(boolean[] a) {
+	private static boolean[] NEG(boolean[] a) {
 		return ADDONE(NOT(a));
 	}
 
-	public static boolean[] ABS(boolean[] a) {
+	private static boolean[] ABS(boolean[] a) {
 		return (isNeg(a)) ? NEG(a) : a;
 	}
 
-	public static boolean isNeg(boolean[] a) {
+	private static boolean isNeg(boolean[] a) {
 		return a[a.length-1];
 	}
 
@@ -180,7 +174,7 @@ public class ALU {
 		return OF;
 	}
 	
-	public static boolean[] NEGATIVE_EIGHT = longToBitArray(-8, 64);
+	private static boolean[] NEGATIVE_EIGHT = longToBitArray(-8, 64);
 	
 	public static void resetCC() {
 		ZF = BASE_VALUE;
