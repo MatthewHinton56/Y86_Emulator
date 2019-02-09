@@ -50,7 +50,7 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		ystab.output.setText(ystab.output.getText() + "\n Assembly compiled and ready for emulation in yotab" );
 		
 		Processor.clear();
-		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".o", output, emb);
+		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".yo", output, emb);
 		yotab.refresh();
 		pane.getTabs().add(yotab);
 		}

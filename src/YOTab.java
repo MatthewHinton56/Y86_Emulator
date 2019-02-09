@@ -42,13 +42,14 @@ public class YOTab extends Tab {
 		area = new TextArea(inputText);
 		this.inputText = inputText;
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-
+		area.setEditable(false);
 		area.setPrefHeight((bounds.getHeight()-175)/2);
 		area.setPrefWidth(bounds.getWidth()/2);
 		pane = new ScrollPane(area);
 		pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		outputDisplay = new TextArea("Processor output:\n");
+		outputDisplay.setEditable(false);
 		outputDisplay.setPrefHeight((bounds.getHeight()-175)/2);
 		outputDisplay.setPrefWidth(bounds.getWidth()/2);
 		outputDisplayPane = new ScrollPane(outputDisplay);
@@ -124,25 +125,48 @@ public class YOTab extends Tab {
 		registerDisplay.add(new TextField(Processor.status), 1, row);
 		row++;
 		for(String register: Processor.registerFile.keySet()) {
-			registerDisplay.add(new TextField(register), 0, row);
-			registerDisplay.add(new TextField("0x"+Processor.registerFile.get(register).displayToString()), 1, row);
+			TextField tf1 = new TextField(register);
+			tf1.setEditable(false);
+			registerDisplay.add(tf1, 0, row);
+			TextField tf2 = new TextField("0x"+Processor.registerFile.get(register).displayToString());
+			tf2.setEditable(false);
+			registerDisplay.add(tf2, 1, row);
 			row++;
 		}
-		registerDisplay.add(new TextField("PC"), 0, row);
+		TextField tx1 = new TextField("PC");
+		tx1.setEditable(false);
+		registerDisplay.add(tx1, 0, row);
 		String PC = (Processor.PC != null) ? "0x"+Processor.PC.displayToString() : "N/A";
-		registerDisplay.add(new TextField(PC), 1, row);
+		TextField tx2 = new TextField(PC);
+		tx2.setEditable(false);
+		registerDisplay.add(tx2, 1, row);
 		row++;
-		registerDisplay.add(new TextField("ZF"), 0, row);
+		
+		TextField zx1 = new TextField("ZF");
+		zx1.setEditable(false);
+		registerDisplay.add(zx1, 0, row);
 		String ZF = (ALU.ZF()) ? "1" : "0";
-		registerDisplay.add(new TextField("0x"+ZF), 1, row);
+		TextField zx2 = new TextField("0x"+ZF);
+		zx2.setEditable(false);
+		registerDisplay.add(zx2, 1, row);
 		row++;
-		registerDisplay.add(new TextField("SF"), 0, row);
+		
+		TextField sx1 = new TextField("SF");
+		sx1.setEditable(false);
+		registerDisplay.add(sx1, 0, row);
 		String SF = (ALU.SF()) ? "1" : "0";
-		registerDisplay.add(new TextField("0x"+SF), 1, row);
+		TextField sx2 = new TextField("0x"+SF);
+		zx2.setEditable(false);
+		registerDisplay.add(sx2, 1, row);
 		row++;
-		registerDisplay.add(new TextField("OF"), 0, row);
+		
+		TextField ox1 = new TextField("OF");
+		ox1.setEditable(false);
+		registerDisplay.add(ox1, 0, row);
 		String OF = (ALU.OF()) ? "1" : "0";
-		registerDisplay.add(new TextField("0x"+OF), 1, row);
+		TextField ox2 = new TextField("0x"+OF);
+		ox2.setEditable(false);
+		registerDisplay.add(ox2, 1, row);
 		
 		String outputDisplay = modifiedDisplay();
 		area.setText(outputDisplay);
@@ -156,8 +180,11 @@ public class YOTab extends Tab {
 			if(!usedAddresses.contains(modifiedAddress)) {
 				usedAddresses.add(modifiedAddress);	
 				LittleEndian value = Memory.loadDoubleWord(modifiedAddress);
-				memDisplay.add(new TextField("0x"+Long.toHexString(modifiedAddress)), 0, row);
-				memDisplay.add(new TextField(displayText(value)), 1, row);
+				TextField tf1 = new TextField("0x"+Long.toHexString(modifiedAddress));
+				tf1.setEditable(false);
+				memDisplay.add(tf1, 0, row);
+				TextField tf2 = new TextField(displayText(value));
+				memDisplay.add(tf2, 1, row);
 				row++;
 			}
 		}
