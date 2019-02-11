@@ -64,9 +64,30 @@ Runs the program until either a halt is encountered, or an error is generated
 
 | System | Option 1 | Option 2 | 
 | -------|----------|----------|
-| Windows | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.2/Y86_Emulator.jar "Y86_Emulator.jar") | [exe](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.2/Y86.Emulator.exe "Y86 Emulator.exe")
-| Mac | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.2/Y86_Emulator.jar "Y86_Emulator.jar") | 
-| Linux | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.2/Y86_Emulator.jar "Y86_Emulator.jar") | 
+| Windows | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86_Emulator_G.jar "Y86_Emulator.jar") | [exe](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86.Emulator.exe "Y86 Emulator.exe")
+| Mac | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86_Emulator_G.jar "Y86_Emulator.jar") | 
+| Linux | [jar](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86_Emulator_G.jar "Y86_Emulator.jar") | 
 
-## Contact
+# Terminal
+The Y86 possesses a terminal interface to run the program as well
+
+## Commands
+
+|  Command  |  Function  |
+|  ------------ |  ----------  |
+| quit  / q |  Quits the program  |
+| load / l |  Load a file  |
+| compile | Compiles the file |
+| initialize / i | Initializes the Processor |
+| disas | prints the Compiled code |
+| step / s / next | Steps the Processor by one |
+| run / r | Runs the Process till completion |
+| reg / register | Displays the register file |
+| mem / memory | Displays main memory |
+
+## Binaries
+
+[Terminal Implementation](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86_Emulator_T.jar "Y86_Emulator.jar")
+
+# Contact
 If errors do occur, or you see an area that can be improved, please do not hesistate to contact me at mjh4395@utexas.edu or list an issue here on github so I can correct it
