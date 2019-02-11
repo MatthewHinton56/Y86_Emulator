@@ -1,4 +1,5 @@
 package GUI;
+
 import Compilation.Compiler;
 import Sequential.YOTab_Seq;
 import javafx.application.Application;
@@ -55,7 +56,8 @@ public class MainStage extends Application implements EventHandler<ActionEvent> 
 				ystab.output.setText(ystab.output.getText() + compilerOutput[0]);
 				ystab.output.setText(ystab.output.getText() + "Assembly compiled and ready for emulation in yotab");
 
-				yotab = new YOTab_Seq(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output, emb);
+				yotab = new YOTab_Seq(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output,
+						emb);
 				yotab.refresh();
 				pane.getTabs().add(yotab);
 			}

@@ -63,6 +63,10 @@ public class Terminal {
 					programCompiled = (compiledText != null);
 					programInitialized = false;
 					break;
+				case "parameter":
+				case "param":
+					processParam(parsedInput);
+					break;
 				case "initialize":
 				case "i":
 					if (programCompiled) {
@@ -235,7 +239,7 @@ public class Terminal {
 						System.out.println("No Program is currently compiled");
 					}
 					break;
-				
+
 				case "ir":
 					if (programCompiled) {
 						processFlags(parsedInput);
@@ -250,8 +254,8 @@ public class Terminal {
 					} else {
 						System.out.println("No Program is currently compiled");
 					}
-					break;	
-					
+					break;
+
 				default:
 					if (input.length() > 0) {
 						System.out.println("Invalid command: " + input);
@@ -264,28 +268,27 @@ public class Terminal {
 
 	private static void processFlags(String[] parsedInput) {
 		if (parsedInput.length > 1) {
-			for(int i = 0; i < parsedInput.length; i++)
-		{
+			for (int i = 0; i < parsedInput.length; i++) {
 
-			if (parsedInput[i].equals("-t") && i + 1 < parsedInput.length) {
-				switch (parsedInput[i + 1]) {
-				case HEX:
-					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEX;
-					break;
-				case HEXLE:
-					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEXLE;
-					break;
-				case SIGNED:
-					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.SIGNED;
-					break;
-				case UNSIGNED:
-					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.UNSIGNED;
-					break;
-				default:
-					System.out.println("Invalid modifier: " + parsedInput[i + 1] + ". Default setting used");
+				if (parsedInput[i].equals("-t") && i + 1 < parsedInput.length) {
+					switch (parsedInput[i + 1]) {
+					case HEX:
+						DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEX;
+						break;
+					case HEXLE:
+						DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEXLE;
+						break;
+					case SIGNED:
+						DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.SIGNED;
+						break;
+					case UNSIGNED:
+						DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.UNSIGNED;
+						break;
+					default:
+						System.out.println("Invalid modifier: " + parsedInput[i + 1] + ". Default setting used");
+					}
 				}
-			}	
-		}
+			}
 		}
 
 	}
@@ -326,6 +329,50 @@ public class Terminal {
 			return null;
 		}
 		return output;
+	}
+
+	private static void processParam(String[] parsedInput) {
+		if (parsedInput.length > 2) {
+			int length = 5;
+			boolean zero_terminator = false;
+			String option = parsedInput[1];
+			for (int i = 2; i < parsedInput.length; i++) {
+				if (parsedInput[i].equals("-l") && i + 1 < parsedInput.length) {
+					try {
+						length = Integer.parseInt(parsedInput[i + 1]);
+					} catch (NumberFormatException e) {
+						System.out.println("Length input invalid, default valid used");
+					}
+				}
+
+				if (parsedInput[i].equals("-z") && i + 1 < parsedInput.length) {
+					zero_terminator = Boolean.parseBoolean(parsedInput[i + 1]);
+				}
+
+			}
+			switch (option.toLowerCase()) {
+			case "rdi":
+				control.setRDI(length, zero_terminator);
+				break;
+			case "rsi":
+				control.setRSI(length, zero_terminator);
+				break;
+			default:
+				System.out.println("Invalid register option");
+			}
+		} else if (parsedInput.length == 2) {
+			String option = parsedInput[1];
+			switch (option.toLowerCase()) {
+			case "rdi":
+				System.out.println(control.getRDI_Info());
+				break;
+			case "rsi":
+				System.out.println(control.getRSI_Info());
+				break;
+			default:
+				System.out.println("Invalid register option");
+			}
+		}
 	}
 
 }

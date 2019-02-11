@@ -12,7 +12,11 @@ public class TextInterface_Seq extends TextInterface {
 	 * Initializes the processor
 	 */
 	public void initialize() {
-		Processor_Seq.initialize();
+		if (this.RDI_Length > 0 || this.RSI_Length > 0)
+			Processor_Seq.initializeInputs(this.RDI_Length > 0, "" + RDI_Length, !this.RDI_Zero_Terminator,
+					this.RSI_Length > 0, "" + RSI_Length, !this.RSI_Zero_Terminator);
+		else
+			Processor_Seq.initialize();
 		System.out.println("Processor output:\n\nInitialize:\n");
 		if (Processor_Seq.status.equals("HLT")) {
 			System.out.println("Program failed to initialize, check that all memory locations are valid");

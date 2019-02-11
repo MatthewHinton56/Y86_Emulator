@@ -1,4 +1,5 @@
 package Sequential;
+
 import java.util.TreeMap;
 
 import BaseEmulator.ALU;
@@ -11,9 +12,8 @@ import BaseEmulator.RegisterFile;
 import Compilation.Compiler;
 import Compilation.InstructionBuilder;
 
-
 public class Processor_Seq {
-	
+
 	public static final RegisterFile registerFile = new RegisterFile();
 	public static Instruction currentInstruction;
 	public static DoubleWord PC = new DoubleWord(0);
@@ -29,14 +29,15 @@ public class Processor_Seq {
 	 * Fetches the next instruction to process
 	 */
 	public static void fetch() {
-		int pcInt = ((int)PC.calculateValueSigned());
+		int pcInt = ((int) PC.calculateValueSigned());
 		BYTE[] instructionArray = Memory.getInstruction(pcInt);
 		currentInstruction = new Instruction(instructionArray, PC);
-		currentInstruction.valP = new DoubleWord(ALU.IADD(PC.bitArray, currentInstruction.standardValPIncrement.bitArray));
-		if(InstructionBuilder.getKey(Instruction.BYTE_TO_FUNCTION, currentInstruction.instruction) == null)
+		currentInstruction.valP = new DoubleWord(
+				ALU.IADD(PC.bitArray, currentInstruction.standardValPIncrement.bitArray));
+		if (InstructionBuilder.getKey(Instruction.BYTE_TO_FUNCTION, currentInstruction.instruction) == null)
 			status = "INV";
 	}
-	
+
 	/**
 	 * Decodes and assigns register values into current instruction
 	 */
@@ -44,10 +45,11 @@ public class Processor_Seq {
 		currentInstruction.valA = registerFile.get(currentInstruction.rA);
 		currentInstruction.valB = registerFile.get(currentInstruction.rB);
 		String instruction = currentInstruction.instruction;
-		if(instruction.equals("ret") || instruction.equals("pushq") || instruction.equals("popq") || instruction.equals("call")) {
+		if (instruction.equals("ret") || instruction.equals("pushq") || instruction.equals("popq")
+				|| instruction.equals("call")) {
 			currentInstruction.valB = registerFile.get("%rsp");
 		}
-		if(instruction.equals("ret"))
+		if (instruction.equals("ret"))
 			currentInstruction.valA = registerFile.get("%rsp");
 
 	}
@@ -56,31 +58,36 @@ public class Processor_Seq {
 	 * Executes the current instruction
 	 */
 	public static void execute() {
-		switch(currentInstruction.instruction) {
+		switch (currentInstruction.instruction) {
 		case "halt":
 			status = "HLT";
 			break;
-		case "mrmovq":	
+		case "mrmovq":
 		case "rmmovq":
-			currentInstruction.valE = new DoubleWord(ALU.IADD(currentInstruction.immediate.bitArray, currentInstruction.valB.bitArray));
+			currentInstruction.valE = new DoubleWord(
+					ALU.IADD(currentInstruction.immediate.bitArray, currentInstruction.valB.bitArray));
 			break;
 		case "addq":
-			currentInstruction.valE = new DoubleWord(ALU.ADD(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
+			currentInstruction.valE = new DoubleWord(
+					ALU.ADD(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
 			break;
 		case "subq":
-			currentInstruction.valE = new DoubleWord(ALU.SUB(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
+			currentInstruction.valE = new DoubleWord(
+					ALU.SUB(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
 			break;
 		case "andq":
-			currentInstruction.valE = new DoubleWord(ALU.AND(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
+			currentInstruction.valE = new DoubleWord(
+					ALU.AND(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
 			break;
 		case "xorq":
-			currentInstruction.valE = new DoubleWord(ALU.XOR(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
+			currentInstruction.valE = new DoubleWord(
+					ALU.XOR(currentInstruction.valA.bitArray, currentInstruction.valB.bitArray));
 			break;
-		case "pushq":	
+		case "pushq":
 		case "call":
 			currentInstruction.valE = new DoubleWord(ALU.DECREMENTEIGHT(currentInstruction.valB.bitArray));
 			break;
-		case "ret":	
+		case "ret":
 		case "popq":
 			currentInstruction.valE = new DoubleWord(ALU.INCREMENTEIGHT(currentInstruction.valB.bitArray));
 			break;
@@ -91,37 +98,38 @@ public class Processor_Seq {
 		case "jl":
 		case "cmovl":
 			currentInstruction.conditionMet = ALU.SF() ^ ALU.OF();
-			break;	
+			break;
 		case "je":
 		case "cmove":
 			currentInstruction.conditionMet = ALU.ZF();
-			break;		
+			break;
 		case "jne":
 		case "cmovne":
 			currentInstruction.conditionMet = !ALU.ZF();
-			break;	
+			break;
 		case "jge":
 		case "cmovge":
 			currentInstruction.conditionMet = !(ALU.SF() ^ ALU.OF());
-			break;	
+			break;
 		case "jg":
 		case "cmovg":
 			currentInstruction.conditionMet = !(ALU.SF() ^ ALU.OF()) && !ALU.ZF();
-			break;		
+			break;
 		}
 	}
-	
+
 	/**
 	 * Performs memory operation if necessary for current instruction
 	 */
 	public static void memory() {
-		if(currentInstruction.memory) {
+		if (currentInstruction.memory) {
 			long address;
-			switch(currentInstruction.instruction) {
+			switch (currentInstruction.instruction) {
 			case "pushq":
 			case "rmmovq":
-				address = currentInstruction.valE.calculateValueSigned();//since map is used, negative are allowed, rather than dealing with signed/unsigned, 
-				//as it essentially the same value.
+				address = currentInstruction.valE.calculateValueSigned();// since map is used, negative are allowed,
+																			// rather than dealing with signed/unsigned,
+				// as it essentially the same value.
 				Memory.storeDoubleWord(address, currentInstruction.valA);
 				break;
 			case "mrmovq":
@@ -137,8 +145,9 @@ public class Processor_Seq {
 				Memory.storeDoubleWord(address, currentInstruction.valP);
 				break;
 			case "ret":
-				address = currentInstruction.valB.calculateValueSigned();//since map is used, negative are allowed, rather than dealing with signed/unsigned, 
-				//as it essentially the same value.
+				address = currentInstruction.valB.calculateValueSigned();// since map is used, negative are allowed,
+																			// rather than dealing with signed/unsigned,
+				// as it essentially the same value.
 				currentInstruction.valM = Memory.loadDoubleWord(address);
 				break;
 			}
@@ -149,7 +158,7 @@ public class Processor_Seq {
 	 * Writes the output value back into the register file
 	 */
 	public static void writeBack() {
-		switch(currentInstruction.instruction) {
+		switch (currentInstruction.instruction) {
 		case "addq":
 		case "subq":
 		case "xorq":
@@ -176,7 +185,7 @@ public class Processor_Seq {
 		case "ret":
 			registerFile.set(currentInstruction.rA, currentInstruction.valM);
 		case "call":
-		case "pushq": 
+		case "pushq":
 			registerFile.set("%rsp", currentInstruction.valE);
 			break;
 		}
@@ -186,7 +195,7 @@ public class Processor_Seq {
 	 * Updates the program counter to the next instruction
 	 */
 	public static void pc() {
-		switch(currentInstruction.instruction) {
+		switch (currentInstruction.instruction) {
 		case "call":
 			currentInstruction.valP = currentInstruction.immediate;
 			break;
@@ -200,7 +209,8 @@ public class Processor_Seq {
 		case "jne":
 		case "jge":
 		case "jg":
-			currentInstruction.valP = (currentInstruction.conditionMet) ? currentInstruction.immediate : currentInstruction.valP;
+			currentInstruction.valP = (currentInstruction.conditionMet) ? currentInstruction.immediate
+					: currentInstruction.valP;
 			break;
 		case "halt":
 			currentInstruction.valP = PC;
@@ -210,15 +220,16 @@ public class Processor_Seq {
 	}
 
 	/**
-	 * Initializes the processor and sets memory to have compiled instructions and data
+	 * Initializes the processor and sets memory to have compiled instructions and
+	 * data
 	 */
 	public static void initialize() {
-		if(Compiler.compiled) {
+		if (Compiler.compiled) {
 			Memory.memory.clear();
-			Processor_Seq.PC = new DoubleWord(Long.parseLong(Compiler.start_address,16));
-			for(long l: Compiler.COMPILED_CONSTANTS.keySet())
+			Processor_Seq.PC = new DoubleWord(Long.parseLong(Compiler.start_address, 16));
+			for (long l : Compiler.COMPILED_CONSTANTS.keySet())
 				Memory.storeDoubleWord(l, Compiler.COMPILED_CONSTANTS.get(l));
-			for(long l: Compiler.COMPILED_INSTRUCTIONS.keySet())
+			for (long l : Compiler.COMPILED_INSTRUCTIONS.keySet())
 				Memory.storeInstruction(l, Compiler.COMPILED_INSTRUCTIONS.get(l));
 			status = "AOK";
 			registerFile.reset();
@@ -236,39 +247,37 @@ public class Processor_Seq {
 	}
 
 	/**
-	 * Steps one instruction through the processor
-	 * Preconditon: Processor status is AOK
+	 * Steps one instruction through the processor Preconditon: Processor status is
+	 * AOK
 	 */
 	public static void step() {
-		if(status.equals("AOK")) {
+		if (status.equals("AOK")) {
 			Processor_Seq.stepBeforeMem = Memory.createImage();
 			Processor_Seq.stepBeforeReg = Processor_Seq.registerFile.createImage();
-			try 
-			{
+			try {
 				fetch();
-			} catch(MemoryException e) {
+			} catch (MemoryException e) {
 				exception = e.getMessage();
 				exceptionGenerated = true;
 				status = "ADR";
 			}
-			if(status.equals("AOK")) {
+			if (status.equals("AOK")) {
 				decode();
 				execute();
-				try 
-				{
+				try {
 					memory();
-				} catch(MemoryException e) {
+				} catch (MemoryException e) {
 					exception = e.getMessage();
 					exceptionGenerated = true;
 					status = "ADR";
 				}
-				if(status.equals("AOK")) {
+				if (status.equals("AOK")) {
 					writeBack();
 					pc();
 				}
 			}
 		}
-		if(status.equals("AOK")) {
+		if (status.equals("AOK")) {
 			Processor_Seq.stepAfterMem = Memory.createImage();
 			Processor_Seq.stepAfterReg = Processor_Seq.registerFile.createImage();
 		} else {
@@ -281,27 +290,25 @@ public class Processor_Seq {
 	 * Runs the processor until status is no longer AOK
 	 */
 	public static void run() {
-		while(status.equals("AOK")) {
-			try 
-			{
+		while (status.equals("AOK")) {
+			try {
 				fetch();
-			} catch(MemoryException e) {
+			} catch (MemoryException e) {
 				exception = e.getMessage();
 				exceptionGenerated = true;
 				status = "ADR";
 			}
-			if(status.equals("AOK")) {
+			if (status.equals("AOK")) {
 				decode();
 				execute();
-				try 
-				{
+				try {
 					memory();
-				} catch(MemoryException e) {
+				} catch (MemoryException e) {
 					exception = e.getMessage();
 					exceptionGenerated = true;
 					status = "ADR";
 				}
-				if(status.equals("AOK")) {
+				if (status.equals("AOK")) {
 					writeBack();
 					pc();
 				}
@@ -326,38 +333,38 @@ public class Processor_Seq {
 	/**
 	 * Initializes the processor using compiled instruction and parameters
 	 * 
-	 * @param RDI_Selected If RDI parameter is enabled
-	 * @param RDI_Length the length of the RDI parameter
+	 * @param RDI_Selected            If RDI parameter is enabled
+	 * @param RDI_Length              the length of the RDI parameter
 	 * @param place_RDI_length_in_RDX flag for if the length is to be stored in RDX
-	 * @param RSI_Selected If RSI parameter is enabled
-	 * @param RSI_Length the length of the RSI parameter
+	 * @param RSI_Selected            If RSI parameter is enabled
+	 * @param RSI_Length              the length of the RSI parameter
 	 * @param place_RSI_length_in_RCX flag for if the length is to be stored in RCX
 	 */
-	public static void initializeInputs(boolean RDI_Selected, String RDI_Length, boolean place_RDI_length_in_RDX, boolean RSI_Selected, String RSI_Length,
-			boolean place_RSI_length_in_RCX) {
+	public static void initializeInputs(boolean RDI_Selected, String RDI_Length, boolean place_RDI_length_in_RDX,
+			boolean RSI_Selected, String RSI_Length, boolean place_RSI_length_in_RCX) {
 		initialize();
 
-		if(Processor_Seq.initialized) {
+		if (Processor_Seq.initialized) {
 			long rdiLength = Long.parseLong(RDI_Length);
-			if(RDI_Selected)
+			if (RDI_Selected)
 				Memory.priorityStore(Memory.RDI_POSITION, rdiLength, !place_RDI_length_in_RDX);
-			if(RDI_Selected && place_RDI_length_in_RDX)
+			if (RDI_Selected && place_RDI_length_in_RDX)
 				Processor_Seq.registerFile.set("%rdx", new DoubleWord(rdiLength));
-			if(RDI_Selected)
+			if (RDI_Selected)
 				Processor_Seq.registerFile.set("%rdi", new DoubleWord(Memory.RDI_POSITION));
 			long rsiLength = Long.parseLong(RSI_Length);
-			if(RSI_Selected)
+			if (RSI_Selected)
 				Memory.priorityStore(Memory.RSI_POSITION, rsiLength, !place_RSI_length_in_RCX);
-			if(RSI_Selected && place_RSI_length_in_RCX)
+			if (RSI_Selected && place_RSI_length_in_RCX)
 				Processor_Seq.registerFile.set("%rcx", new DoubleWord(rsiLength));
-			if(RSI_Selected)
+			if (RSI_Selected)
 				Processor_Seq.registerFile.set("%rsi", new DoubleWord(Memory.RSI_POSITION));
 			Processor_Seq.initialMemory = Memory.createImage();
 			Processor_Seq.initialRegisterFile = Processor_Seq.registerFile.createImage();
 			finalMemory = stepBeforeMem = stepAfterMem = null;
 			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
 		}
-		
+
 	}
 
 }
