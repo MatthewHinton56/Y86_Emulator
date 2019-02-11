@@ -73,17 +73,31 @@ The Y86 possesses a terminal interface to run the program as well
 
 ## Commands
 
-|  Command  |  Function  |
-|  ------------ |  ----------  |
-| quit  / q |  Quits the program  |
-| load / l |  Load a file  |
-| compile | Compiles the file |
-| initialize / i | Initializes the Processor |
-| disas | prints the Compiled code |
-| step / s / next | Steps the Processor by one |
-| run / r | Runs the Process till completion |
-| reg / register | Displays the register file |
-| mem / memory | Displays main memory |
+|  Command  |  Function  | Format |
+|  ------------ |  ----------  | ------ |
+| quit  / q |  Quits the program  | quit |
+| load / l |  Load a file  | load file_path |
+| compile | Compiles the file | complie |
+| initialize / i | Initializes the Processor | initialize -t < Type > |
+| disas | prints the Compiled code | disas |
+| step / s / next | Steps the Processor by one | step -t < Type > |
+| run / r | Runs the Process till completion | run -t < Type > |
+| reg / register | Displays the register file | reg -t < Type > |
+| mem / memory | Displays main memory | mem -t < Type > |
+| lcir | performs load -> compile -> intialize -> run | lcir file_path -t < Type > |
+| lci | performs load -> compile -> intialize | lci file_path -t < Type > |
+| lc | performs load -> compile | lc file_path |
+| cir | performs compile -> intialize -> run | cir -t < Type > |
+| ir | performs intialize -> run | ir -t < Type > |
+| ci | performs compile -> intialize | ci -t < Type > |
+| param | sets the parameter for either rdi or rsi | param < rdi / rsi > -l < length > -z < zero_terminated = true / false >
+
+| Type | Flag | Description |
+| ---- | ---- | ----------- |
+| Hex  | H    | Hex format  |
+| Hex LE  | HL   | Hex Little Endian format  |
+| Unsigned | U    | Unsigned long  |
+| Signed | S    | Signed long  |
 
 ## Binaries
 
