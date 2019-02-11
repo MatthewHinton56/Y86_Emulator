@@ -1,7 +1,11 @@
+package Compilation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import Sequential.DoubleWord;
+import Sequential.Instruction;
 
 public class Compiler {
 

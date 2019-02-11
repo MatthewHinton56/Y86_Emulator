@@ -1,3 +1,4 @@
+package Sequential;
 
 public class HalfWord extends LittleEndian {
 

@@ -1,4 +1,8 @@
+package Sequential;
 import java.util.TreeMap;
+
+import Compilation.Compiler;
+import Compilation.InstructionBuilder;
 
 public class Processor {
 	

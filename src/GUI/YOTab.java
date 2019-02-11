@@ -1,9 +1,17 @@
+package GUI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
+import Sequential.ALU;
+import Sequential.BYTE;
+import Sequential.DoubleWord;
+import Sequential.LittleEndian;
+import Sequential.Memory;
+import Sequential.Processor;
+import Sequential.RegisterFile;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;

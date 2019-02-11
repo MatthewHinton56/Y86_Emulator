@@ -1,3 +1,4 @@
+package GUI;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -5,6 +6,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 
+import Sequential.Instruction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;

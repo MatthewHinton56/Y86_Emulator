@@ -1,4 +1,8 @@
+package Compilation;
 import java.util.HashMap;
+
+import Sequential.DoubleWord;
+import Sequential.Instruction;
 
 public class InstructionBuilder {
 

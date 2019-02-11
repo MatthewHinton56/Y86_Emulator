@@ -1,4 +1,4 @@
-
+package Sequential;
 public class BYTE extends LittleEndian {
 	/**
 	 * Byte Constant

@@ -1,3 +1,4 @@
+package Sequential;
 
 public class DoubleWord extends LittleEndian {
 

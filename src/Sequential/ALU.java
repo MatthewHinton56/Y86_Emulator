@@ -1,3 +1,4 @@
+package Sequential;
 
 /**
  * Provides ALU functionality to the Y86 processor emulator Uses logical

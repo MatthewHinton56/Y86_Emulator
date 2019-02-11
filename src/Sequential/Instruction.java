@@ -1,5 +1,8 @@
+package Sequential;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import Compilation.InstructionBuilder;
 
 public class Instruction {
 
@@ -22,7 +25,7 @@ public class Instruction {
 	String instruction;
 	boolean memory, conditionMet;
 	public boolean stop;
-	DoubleWord address;
+	public DoubleWord address;
 
 	/**
 	 * Creates an instruction using the instruction Array

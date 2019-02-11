@@ -1,3 +1,5 @@
+package Sequential;
+
 public abstract class LittleEndian {
 
 	@Override

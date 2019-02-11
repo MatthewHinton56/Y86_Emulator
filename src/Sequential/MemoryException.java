@@ -1,3 +1,4 @@
+package Sequential;
 
 public class MemoryException extends RuntimeException {
 
