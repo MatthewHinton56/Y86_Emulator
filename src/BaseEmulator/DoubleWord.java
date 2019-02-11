@@ -1,4 +1,4 @@
-package Sequential;
+package BaseEmulator;
 
 public class DoubleWord extends LittleEndian {
 

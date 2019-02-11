@@ -1,10 +1,17 @@
 package Sequential;
 import java.util.TreeMap;
 
+import BaseEmulator.ALU;
+import BaseEmulator.BYTE;
+import BaseEmulator.DoubleWord;
+import BaseEmulator.Instruction;
+import BaseEmulator.Memory;
+import BaseEmulator.MemoryException;
+import BaseEmulator.RegisterFile;
 import Compilation.Compiler;
 import Compilation.InstructionBuilder;
 
-public class Processor {
+public class Processor_Seq {
 	
 	public static final RegisterFile registerFile = new RegisterFile();
 	public static Instruction currentInstruction;
@@ -207,7 +214,7 @@ public class Processor {
 	public static void initialize() {
 		if(Compiler.compiled) {
 			Memory.memory.clear();
-			Processor.PC = new DoubleWord(Long.parseLong(Compiler.start_address,16));
+			Processor_Seq.PC = new DoubleWord(Long.parseLong(Compiler.start_address,16));
 			for(long l: Compiler.COMPILED_CONSTANTS.keySet())
 				Memory.storeDoubleWord(l, Compiler.COMPILED_CONSTANTS.get(l));
 			for(long l: Compiler.COMPILED_INSTRUCTIONS.keySet())
@@ -215,8 +222,8 @@ public class Processor {
 			status = "AOK";
 			registerFile.reset();
 			ALU.resetCC();
-			Processor.initialMemory = Memory.createImage();
-			Processor.initialRegisterFile = Processor.registerFile.createImage();
+			Processor_Seq.initialMemory = Memory.createImage();
+			Processor_Seq.initialRegisterFile = Processor_Seq.registerFile.createImage();
 			finalMemory = stepBeforeMem = stepAfterMem = null;
 			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
 			initialized = true;
@@ -233,8 +240,8 @@ public class Processor {
 	 */
 	public static void step() {
 		if(status.equals("AOK")) {
-			Processor.stepBeforeMem = Memory.createImage();
-			Processor.stepBeforeReg = Processor.registerFile.createImage();
+			Processor_Seq.stepBeforeMem = Memory.createImage();
+			Processor_Seq.stepBeforeReg = Processor_Seq.registerFile.createImage();
 			try 
 			{
 				fetch();
@@ -261,11 +268,11 @@ public class Processor {
 			}
 		}
 		if(status.equals("AOK")) {
-			Processor.stepAfterMem = Memory.createImage();
-			Processor.stepAfterReg = Processor.registerFile.createImage();
+			Processor_Seq.stepAfterMem = Memory.createImage();
+			Processor_Seq.stepAfterReg = Processor_Seq.registerFile.createImage();
 		} else {
-			Processor.stepBeforeMem = Processor.finalMemory = Memory.createImage();
-			Processor.stepBeforeReg = Processor.finalRegisterFile = Processor.registerFile.createImage();
+			Processor_Seq.stepBeforeMem = Processor_Seq.finalMemory = Memory.createImage();
+			Processor_Seq.stepBeforeReg = Processor_Seq.finalRegisterFile = Processor_Seq.registerFile.createImage();
 		}
 	}
 
@@ -299,8 +306,8 @@ public class Processor {
 				}
 			}
 		}
-		Processor.finalMemory = Memory.createImage();
-		Processor.finalRegisterFile = Processor.registerFile.createImage();
+		Processor_Seq.finalMemory = Memory.createImage();
+		Processor_Seq.finalRegisterFile = Processor_Seq.registerFile.createImage();
 	}
 
 	/**
@@ -311,7 +318,7 @@ public class Processor {
 		status = "HLT";
 		registerFile.reset();
 		ALU.resetCC();
-		Processor.PC = new DoubleWord(0);
+		Processor_Seq.PC = new DoubleWord(0);
 		Memory.accessibleMemory.clear();
 	}
 
@@ -329,23 +336,23 @@ public class Processor {
 			boolean place_RSI_length_in_RCX) {
 		initialize();
 
-		if(Processor.initialized) {
+		if(Processor_Seq.initialized) {
 			long rdiLength = Long.parseLong(RDI_Length);
 			if(RDI_Selected)
 				Memory.priorityStore(Memory.RDI_POSITION, rdiLength, !place_RDI_length_in_RDX);
 			if(RDI_Selected && place_RDI_length_in_RDX)
-				Processor.registerFile.set("%rdx", new DoubleWord(rdiLength));
+				Processor_Seq.registerFile.set("%rdx", new DoubleWord(rdiLength));
 			if(RDI_Selected)
-				Processor.registerFile.set("%rdi", new DoubleWord(Memory.RDI_POSITION));
+				Processor_Seq.registerFile.set("%rdi", new DoubleWord(Memory.RDI_POSITION));
 			long rsiLength = Long.parseLong(RSI_Length);
 			if(RSI_Selected)
 				Memory.priorityStore(Memory.RSI_POSITION, rsiLength, !place_RSI_length_in_RCX);
 			if(RSI_Selected && place_RSI_length_in_RCX)
-				Processor.registerFile.set("%rcx", new DoubleWord(rsiLength));
+				Processor_Seq.registerFile.set("%rcx", new DoubleWord(rsiLength));
 			if(RSI_Selected)
-				Processor.registerFile.set("%rsi", new DoubleWord(Memory.RSI_POSITION));
-			Processor.initialMemory = Memory.createImage();
-			Processor.initialRegisterFile = Processor.registerFile.createImage();
+				Processor_Seq.registerFile.set("%rsi", new DoubleWord(Memory.RSI_POSITION));
+			Processor_Seq.initialMemory = Memory.createImage();
+			Processor_Seq.initialRegisterFile = Processor_Seq.registerFile.createImage();
 			finalMemory = stepBeforeMem = stepAfterMem = null;
 			finalRegisterFile = stepBeforeReg = stepAfterReg = null;
 		}

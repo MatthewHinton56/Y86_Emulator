@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import Sequential.DoubleWord;
-import Sequential.Instruction;
+import BaseEmulator.DoubleWord;
+import BaseEmulator.Instruction;
 
 public class Compiler {
 

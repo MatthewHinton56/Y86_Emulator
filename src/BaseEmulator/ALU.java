@@ -1,4 +1,4 @@
-package Sequential;
+package BaseEmulator;
 
 /**
  * Provides ALU functionality to the Y86 processor emulator Uses logical

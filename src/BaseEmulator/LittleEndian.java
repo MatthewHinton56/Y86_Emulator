@@ -1,4 +1,4 @@
-package Sequential;
+package BaseEmulator;
 
 public abstract class LittleEndian {
 
@@ -10,7 +10,7 @@ public abstract class LittleEndian {
 		return ALU.Equal(this.bitArray, le.bitArray);
 	}
 
-	protected final boolean bitArray[];
+	public final boolean bitArray[];
 
 	/**
 	 * Calculates the value of the Little Endian value

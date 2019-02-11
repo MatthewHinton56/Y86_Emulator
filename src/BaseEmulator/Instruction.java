@@ -1,4 +1,4 @@
-package Sequential;
+package BaseEmulator;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -18,12 +18,14 @@ public class Instruction {
 		generateInstructionArchetypes();
 	}
 
-	DoubleWord immediate;
-	String rA, rB;
-	DoubleWord valA, valB, valE, valM, valP, standardValPIncrement;
+	public DoubleWord immediate;
+	public String rA, rB;
+	public DoubleWord valA, valB, valE, valM;
+	public DoubleWord valP;
+	public DoubleWord standardValPIncrement;
 	// 0 - RS1Val, 1 - RS2Val, 2 - EVal, 3 - MVal
-	String instruction;
-	boolean memory, conditionMet;
+	public String instruction;
+	public boolean memory, conditionMet;
 	public boolean stop;
 	public DoubleWord address;
 

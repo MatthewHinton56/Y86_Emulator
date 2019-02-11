@@ -1,4 +1,5 @@
-package Sequential;
+package BaseEmulator;
+
 public class BYTE extends LittleEndian {
 	/**
 	 * Byte Constant

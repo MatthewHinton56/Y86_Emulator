@@ -1,17 +1,14 @@
-package GUI;
-import java.util.ArrayList;
+package Sequential;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeMap;
 
-import Sequential.ALU;
-import Sequential.BYTE;
-import Sequential.DoubleWord;
-import Sequential.LittleEndian;
-import Sequential.Memory;
-import Sequential.Processor;
-import Sequential.RegisterFile;
+import BaseEmulator.ALU;
+import BaseEmulator.DisplayBuilder;
+import BaseEmulator.DoubleWord;
+import BaseEmulator.LittleEndian;
+import BaseEmulator.Memory;
+import GUI.EmulatorMenuBar;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -27,7 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 
-public class YOTab extends Tab {
+public class YOTab_Seq extends Tab {
 
 	String fileName;
 	Button step, run, initialize;
@@ -52,7 +49,7 @@ public class YOTab extends Tab {
 	 * @param inputText the text to be displayed
 	 * @param emb       the menu bar to be read from
 	 */
-	public YOTab(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
+	public YOTab_Seq(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
 		this.parent = parent;
 		border = new BorderPane();
 		textBorder = new BorderPane();
@@ -86,13 +83,13 @@ public class YOTab extends Tab {
 		initialize.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				if (emb.RDI_Input.isSelected() || emb.RSI_Input.isSelected())
-					Processor.initializeInputs(emb.RDI_Input.isSelected(),
+					Processor_Seq.initializeInputs(emb.RDI_Input.isSelected(),
 							((RadioMenuItem) emb.RDIGroup.getSelectedToggle()).getText(),
 							emb.store_RDI_Length_RDX.isSelected(), emb.RSI_Input.isSelected(),
 							((RadioMenuItem) emb.RSIGroup.getSelectedToggle()).getText(),
 							emb.store_RSI_Length_RCX.isSelected());
 				else
-					Processor.initialize();
+					Processor_Seq.initialize();
 				refresh();
 				initializeDisplay();
 			}
@@ -102,7 +99,7 @@ public class YOTab extends Tab {
 		step.setPrefWidth(100);
 		step.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Processor.step();
+				Processor_Seq.step();
 				refresh();
 				stepDisplay();
 			}
@@ -112,7 +109,7 @@ public class YOTab extends Tab {
 		run.setPrefWidth(100);
 		run.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Processor.run();
+				Processor_Seq.run();
 				refresh();
 				runDisplay();
 			}
@@ -144,13 +141,13 @@ public class YOTab extends Tab {
 		registerDisplay.add(new TextField("Processor info"), 0, row);
 		row++;
 		registerDisplay.add(new TextField("Status"), 0, row);
-		registerDisplay.add(new TextField(Processor.status), 1, row);
+		registerDisplay.add(new TextField(Processor_Seq.status), 1, row);
 		row++;
-		for (String register : Processor.registerFile.keySet()) {
+		for (String register : Processor_Seq.registerFile.keySet()) {
 			TextField tf1 = new TextField(register);
 			tf1.setEditable(false);
 			registerDisplay.add(tf1, 0, row);
-			TextField tf2 = new TextField("0x" + Processor.registerFile.get(register).displayToString());
+			TextField tf2 = new TextField("0x" + Processor_Seq.registerFile.get(register).displayToString());
 			tf2.setEditable(false);
 			registerDisplay.add(tf2, 1, row);
 			row++;
@@ -158,7 +155,7 @@ public class YOTab extends Tab {
 		TextField tx1 = new TextField("PC");
 		tx1.setEditable(false);
 		registerDisplay.add(tx1, 0, row);
-		String PC = (Processor.PC != null) ? "0x" + Processor.PC.displayToString() : "N/A";
+		String PC = "0x" + Processor_Seq.PC.displayToString();
 		TextField tx2 = new TextField(PC);
 		tx2.setEditable(false);
 		registerDisplay.add(tx2, 1, row);
@@ -205,158 +202,74 @@ public class YOTab extends Tab {
 				TextField tf1 = new TextField("0x" + Long.toHexString(modifiedAddress));
 				tf1.setEditable(false);
 				memDisplay.add(tf1, 0, row);
-				TextField tf2 = new TextField(displayText(value));
+				TextField tf2 = new TextField(DisplayBuilder.displayText(value));
 				memDisplay.add(tf2, 1, row);
 				row++;
 			}
 		}
 
 	}
+	
+	
+	
+	
+	
 
 	/**
 	 * Creates a display entry for step
 	 */
 	protected void stepDisplay() {
-		if (Processor.initialized) {
+		if (Processor_Seq.initialized) {
 			outputDisplay.setText(outputDisplay.getText() + "STEP:\n");
-			if (!Processor.status.equals("AOK")) {
-				if (Processor.exceptionGenerated)
+			if (!Processor_Seq.status.equals("AOK")) {
+				if (Processor_Seq.exceptionGenerated)
 					outputDisplay.setText(
-							outputDisplay.getText() + "The processor exited with:\n" + Processor.exception + "\n");
+							outputDisplay.getText() + "The processor exited with:\n" + Processor_Seq.exception + "\n");
 				else {
-					outputDisplay.setText(outputDisplay.getText() + "The program has completed its execution:\n");
-					outputDisplay.setText(outputDisplay.getText() + "PC: " + displayText(Processor.PC) + "\n");
-					outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: "
-							+ Processor.completedInstruction.buildDisplayInstruction() + "\n");
-					outputDisplay.setText(outputDisplay.getText() + registerDisplay());
-					outputDisplay.setText(outputDisplay.getText() + memoryDisplay());
-					outputDisplay.setText(outputDisplay.getText()
-							+ registerDifference(Processor.initialRegisterFile, Processor.finalRegisterFile, "FINAL"));
-					outputDisplay.setText(outputDisplay.getText()
-							+ memoryDifference(Processor.initialMemory, Processor.finalMemory, "FINAL"));
+					
+					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Seq.PC, Processor_Seq.completedInstruction,
+							Processor_Seq.registerFile, Processor_Seq.exceptionGenerated, Processor_Seq.exception, 
+							Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile, 
+							Processor_Seq.initialMemory, Processor_Seq.finalMemory);
+					
+					outputDisplay.setText(outputDisplay.getText() + output);
 				}
 			} else {
-				outputDisplay.setText(
-						outputDisplay.getText() + "PC: " + displayText(Processor.completedInstruction.address) + "\n");
-				outputDisplay.setText(outputDisplay.getText() + "Completed Instruction: "
-						+ Processor.completedInstruction.buildDisplayInstruction() + "\n");
-				outputDisplay.setText(outputDisplay.getText()
-						+ registerDifference(Processor.stepBeforeReg, Processor.stepAfterReg, "STEP"));
-				outputDisplay.setText(outputDisplay.getText()
-						+ memoryDifference(Processor.stepBeforeMem, Processor.stepAfterMem, "STEP"));
+				String output = DisplayBuilder.stepDisplayBuilder(Processor_Seq.completedInstruction.address, Processor_Seq.completedInstruction, 
+						Processor_Seq.stepBeforeReg, Processor_Seq.stepAfterReg, Processor_Seq.stepBeforeMem, Processor_Seq.stepAfterMem);
+				outputDisplay.setText(outputDisplay.getText() + output);
 			}
 		}
 	}
-
+	
 	/**
 	 * Creates a run display entry
 	 */
 	protected void runDisplay() {
-		if (Processor.initialized) {
-			outputDisplay.setText(outputDisplay.getText() + "RUN:\n");
-			outputDisplay.setText(outputDisplay.getText() + "PC: " + displayText(Processor.PC) + "\n");
-			if (Processor.exceptionGenerated)
-				outputDisplay
-						.setText(outputDisplay.getText() + "The processor exited with: " + Processor.exception + "\n");
-			outputDisplay.setText(outputDisplay.getText() + registerDisplay());
-			outputDisplay.setText(outputDisplay.getText() + memoryDisplay());
-			outputDisplay.setText(outputDisplay.getText()
-					+ registerDifference(Processor.initialRegisterFile, Processor.finalRegisterFile, "FINAL"));
-			outputDisplay.setText(outputDisplay.getText()
-					+ memoryDifference(Processor.initialMemory, Processor.finalMemory, "FINAL"));
+		if (Processor_Seq.initialized) {
+			String output = DisplayBuilder.runDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile, 
+					Processor_Seq.exceptionGenerated, Processor_Seq.exception, 
+					Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile, 
+					Processor_Seq.initialMemory, Processor_Seq.finalMemory);
+			outputDisplay.setText(outputDisplay.getText() + output);
 		}
 	}
 
+	
+	
 	/**
 	 * Creates an initialize display entry
 	 */
 	public void initializeDisplay() {
 		outputDisplay.setText("Processor output:\n\n Initialize:\n");
-		if (Processor.status.equals("HLT")) {
+		if (Processor_Seq.status.equals("HLT")) {
 			outputDisplay.setText(outputDisplay.getText()
 					+ "Program failed to initialize, check that all memory locations are valid");
 		} else {
-			outputDisplay.setText(outputDisplay.getText() + "PC: " + displayText(Processor.PC) + "\n\n");
-			outputDisplay.setText(outputDisplay.getText() + registerDisplay() + "\n");
-			outputDisplay.setText(outputDisplay.getText() + memoryDisplay() + "\n");
+			outputDisplay.setText(outputDisplay.getText() + "PC: " + DisplayBuilder.initializeDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile));
 		}
 	}
-
-	/**
-	 * Creates a register display string
-	 * 
-	 * @return the register file as a string
-	 */
-	private String registerDisplay() {
-		String output = "Register File:\n";
-		for (String reg : Processor.registerFile.keySet()) {
-			output += String.format("%3s", reg) + " = " + displayText(Processor.registerFile.get(reg)) + "\n";
-		}
-		return output + "\n";
-	}
-
-	/**
-	 * Uses the before and after images to create the dif tree, printing it
-	 * 
-	 * @param before the previous image
-	 * @param after  the after image
-	 * @param text   the type of difference
-	 * @return the string representation of the dif
-	 */
-	private String registerDifference(TreeMap<String, DoubleWord> before, TreeMap<String, DoubleWord> after,
-			String text) {
-		String output = "Register File Differences: " + text + ":\n";
-		ArrayList<String> dif = RegisterFile.getDif(before, after);
-		for (String s : dif) {
-			output += String.format("%3s", s) + ": " + displayText(before.get(s)) + "====>" + displayText(after.get(s))
-					+ "\n";
-		}
-		return output + "\n";
-	}
-
-	/**
-	 * The memory display as a string
-	 * 
-	 * @return represents the memory as a string
-	 */
-	private String memoryDisplay() {
-		String output = "Memory:\n";
-		Set<Long> usedAddresses = new HashSet<Long>();
-		for (long address : Memory.memory.keySet()) {
-			long modifiedAddress = address - address % 8;
-			if (address < 0)
-				modifiedAddress = address - ((8 + address % 8) % 8);
-			if (!usedAddresses.contains(modifiedAddress)) {
-				usedAddresses.add(modifiedAddress);
-				output += "0x" + Long.toUnsignedString(address, 16) + " = "
-						+ displayText(Memory.loadDoubleWord(modifiedAddress)) + "\n";
-			}
-		}
-		return output + "\n";
-	}
-
-	/**
-	 * Uses the before and after images to create the dif tree, printing it
-	 * 
-	 * @param before the previous image
-	 * @param after  the after image
-	 * @param text   the type of difference
-	 * @return the string representation of the dif
-	 */
-	private String memoryDifference(TreeMap<Long, DoubleWord> before, TreeMap<Long, DoubleWord> after, String text) {
-		String output = "Memory Differences: " + text + ":\n";
-		ArrayList<Long> dif = Memory.getDif(before, after);
-		for (Long l : dif) {
-			if (before.containsKey(l))
-				output += "0x" + Long.toString(l, 16) + ": " + displayText(before.get(l)) + "====>"
-						+ displayText(after.get(l)) + "\n";
-			else
-				output += "0x" + Long.toString(l, 16) + ": " + displayText(new BYTE()) + "====>"
-						+ displayText(after.get(l)) + "\n";
-		}
-		return output + "\n";
-	}
-
+	
 	/**
 	 * Used to show which instruction is next in the sequential machine to be
 	 * executed
@@ -372,7 +285,7 @@ public class YOTab extends Tab {
 			DoubleWord address = new DoubleWord(Long.parseLong(addressString, 16));
 			String restOfLine = line.substring(line.indexOf(":") + 1);
 			if (!restOfLine.contains(":") && !restOfLine.contains(".")) {
-				if (Processor.PC.equals(address))
+				if (Processor_Seq.PC.equals(address))
 					output += ">";
 				else
 					output += "\u2002";
@@ -384,19 +297,6 @@ public class YOTab extends Tab {
 		}
 		scan.close();
 		return output;
-	}
-
-	public static String displayText(LittleEndian val) {
-		switch (EmulatorMenuBar.displaySetting) {
-		case EmulatorMenuBar.SIGNED:
-			return (val.calculateValueSigned() + " ");
-		case EmulatorMenuBar.UNSIGNED:
-			return val.calculateValueUnSigned();
-		case EmulatorMenuBar.HEXLE:
-			return val.generateHexLE();
-		default:
-			return "0x" + val.displayToString();
-		}
 	}
 
 }

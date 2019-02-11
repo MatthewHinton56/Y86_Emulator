@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 
-import Sequential.Instruction;
+import BaseEmulator.DisplayBuilder;
+import BaseEmulator.Instruction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -20,17 +21,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent> {
 
-	public static final String HEX = "Hex";
-	public static final String UNSIGNED = "Unsigned";
-	public static final String SIGNED = "Signed";
-	public static final String HEXLE = "Hex LE";
-
 	public MainStage mainStage;
 	public Menu file, options;
 	public MenuItem newButton, saveButton, loadButton;
 	public RadioMenuItem hex, unsigned, signed, hexLe;
 	public ToggleGroup group;
-	public static String displaySetting = HEX;
+	public static String displaySetting = DisplayBuilder.HEX;
 	// IF length is not stored, array is terminated with zero, and all other values
 	// will not be zero.
 	public RadioMenuItem RDI_Input, RSI_Input, store_RDI_Length_RDX, store_RSI_Length_RCX;
@@ -114,10 +110,10 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 			}
 		});
 		options = new Menu("Data Display");
-		hex = new RadioMenuItem(HEX);
-		unsigned = new RadioMenuItem(UNSIGNED);
-		signed = new RadioMenuItem(SIGNED);
-		hexLe = new RadioMenuItem(HEXLE);
+		hex = new RadioMenuItem(DisplayBuilder.HEX);
+		unsigned = new RadioMenuItem(DisplayBuilder.UNSIGNED);
+		signed = new RadioMenuItem(DisplayBuilder.SIGNED);
+		hexLe = new RadioMenuItem(DisplayBuilder.HEXLE);
 
 		group = new ToggleGroup();
 		hex.setToggleGroup(group);
@@ -188,7 +184,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 	 * The handle for various portions of the menu bar
 	 */
 	public void handle(ActionEvent arg0) {
-		displaySetting = ((RadioMenuItem) group.getSelectedToggle()).getText();
+		DisplayBuilder.DISPLAY_SETTING = ((RadioMenuItem) group.getSelectedToggle()).getText();
 		if (mainStage.yotab != null)
 			mainStage.yotab.refresh();
 		if (mainStage.ystab != null && arg0.getSource() instanceof MenuItem
@@ -200,5 +196,4 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 			mainStage.ystab.area.setText(mainStage.ystab.area.getText() + archetype + "\n");
 		}
 	}
-
 }
