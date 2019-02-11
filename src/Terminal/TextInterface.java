@@ -16,7 +16,7 @@ public abstract class TextInterface {
 	public abstract void run();
 
 	public abstract void register();
-	
+
 	/**
 	 * Creates a memory output
 	 */

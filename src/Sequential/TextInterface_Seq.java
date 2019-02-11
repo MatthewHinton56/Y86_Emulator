@@ -14,13 +14,13 @@ public class TextInterface_Seq extends TextInterface {
 	public void initialize() {
 		Processor_Seq.initialize();
 		System.out.println("Processor output:\n\nInitialize:\n");
-		if(Processor_Seq.status.equals("HLT")) {
+		if (Processor_Seq.status.equals("HLT")) {
 			System.out.println("Program failed to initialize, check that all memory locations are valid");
 		} else {
 			System.out.println(DisplayBuilder.initializeDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile));
 		}
 	}
-	
+
 	/**
 	 * Shows the compiler output
 	 */
@@ -44,18 +44,18 @@ public class TextInterface_Seq extends TextInterface {
 			output += " " + line + "\n";
 		}
 		scan.close();
-		 System.out.println(output);
+		System.out.println(output);
 	}
-	
+
 	/**
 	 * Displays one step execution
 	 */
 	public void step() {
 		Processor_Seq.step();
-		if(Processor_Seq.initialized) {
+		if (Processor_Seq.initialized) {
 			System.out.println("STEP:");
-			if(Processor_Seq.status.equals("HLT")) {
-				if(Processor_Seq.exceptionGenerated)
+			if (Processor_Seq.status.equals("HLT")) {
+				if (Processor_Seq.exceptionGenerated)
 					System.out.println("The processor exited with:\n" + Processor_Seq.exception);
 				else {
 					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Seq.PC,
@@ -77,9 +77,13 @@ public class TextInterface_Seq extends TextInterface {
 		}
 	}
 
+	/**
+	 * clockPulse: should never be called on this object
+	 */
 	@Override
-	public void clockPulse() {}
-	
+	public void clockPulse() {
+	}
+
 	/**
 	 * Creates a run display entry
 	 */
@@ -91,19 +95,23 @@ public class TextInterface_Seq extends TextInterface {
 			System.out.println(output);
 		}
 	}
-	
+
 	/**
 	 * Creates a register output
 	 */
 	public void register() {
-		if(Processor_Seq.initialized) {
+		if (Processor_Seq.initialized) {
 			System.out.println(DisplayBuilder.registerDisplay(Processor_Seq.registerFile));
 		} else {
 			System.out.println("Processor is not initialized");
 		}
 	}
 
+	/**
+	 * Pipeline: should never be called on this object
+	 */
 	@Override
-	public void pipeline(String compiledText) {}
-	
+	public void pipeline(String compiledText) {
+	}
+
 }

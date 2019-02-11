@@ -17,11 +17,14 @@ public class Terminal {
 
 	private static TextInterface control;
 	private static boolean pipelined;
-	
+
 	public static void main(String[] args) {
 		runInterface();
 	}
-	
+
+	/**
+	 * Runs the text interface
+	 */
 	private static void runInterface() {
 		boolean running = true;
 		String fileText = "";
@@ -146,10 +149,9 @@ public class Terminal {
 	}
 
 	private static void processFlags(String[] parsedInput) {
-		if(parsedInput.length > 1) {
-			if(parsedInput[1].equals("-t"))	{
-				switch(parsedInput[2])
-				{
+		if (parsedInput.length > 1) {
+			if (parsedInput[1].equals("-t")) {
+				switch (parsedInput[2]) {
 				case HEX:
 					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEX;
 					break;
@@ -161,9 +163,9 @@ public class Terminal {
 					break;
 				case UNSIGNED:
 					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.UNSIGNED;
-					break;	
+					break;
 				default:
-					System.out.println("Invalid modifier: "+ parsedInput[2] + ". Default setting used");
+					System.out.println("Invalid modifier: " + parsedInput[2] + ". Default setting used");
 				}
 			}
 		}
