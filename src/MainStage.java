@@ -42,12 +42,14 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		ystab.output.setText("Compiler Output:\n");
 		String output;
 		try {
-		output = Compiler.compile(input, ystab.output);
+		String[] compilerOutput = new String[1];
+		compilerOutput[0] = "";
+		output = Compiler.compile(input, compilerOutput);
 		if(output.length() == 0) {
 			ystab.output.setText(ystab.output.getText() + "\n Nothing provided to compile");
 		} else {
-			
-		ystab.output.setText(ystab.output.getText() + "\n Assembly compiled and ready for emulation in yotab" );
+		ystab.output.setText(ystab.output.getText() + compilerOutput[0]);	
+		ystab.output.setText(ystab.output.getText() + "Assembly compiled and ready for emulation in yotab" );
 		
 		Processor.clear();
 		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".yo", output, emb);

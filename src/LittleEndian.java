@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public abstract class LittleEndian {
 
 	@Override
@@ -277,7 +275,7 @@ public abstract class LittleEndian {
 	 * Scans an array for a specfic char value
 	 * 
 	 * @param array the array to scan
-	 * @param t the char value to look up
+	 * @param t     the char value to look up
 	 * @return if the array contains the char
 	 */
 	public static boolean charContains(char[] array, char t) {
