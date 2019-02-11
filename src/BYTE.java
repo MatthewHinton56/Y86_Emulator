@@ -28,14 +28,14 @@ public class BYTE extends LittleEndian {
 		super(getByte(hex));
 	}
 	
-	public Word extendToHalfWord(boolean signed) {
+	public HalfWord extendToHalfWord(boolean signed) {
 		 String hex = this.generateHex();
 		 if(signed) {
 			 boolean neg = this.getSign();
 			 hex = (neg) ? "FF" + hex : "00" +hex;
 			 return new HalfWord(hex, false);
 		 } 
-		 return new Word("00" + hex, false);
+		 return new HalfWord("00" + hex, false);
 	}
 	
 	public Word extendToWord(boolean signed) {
