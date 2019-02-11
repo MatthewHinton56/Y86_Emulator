@@ -51,8 +51,8 @@ public class TextInterface_Seq extends TextInterface {
 	 * Displays one step execution
 	 */
 	public void step() {
-		Processor_Seq.step();
 		if (Processor_Seq.initialized) {
+			Processor_Seq.step();
 			System.out.println("STEP:");
 			if (Processor_Seq.status.equals("HLT")) {
 				if (Processor_Seq.exceptionGenerated)
@@ -89,6 +89,7 @@ public class TextInterface_Seq extends TextInterface {
 	 */
 	public void run() {
 		if (Processor_Seq.initialized) {
+			Processor_Seq.run();
 			String output = DisplayBuilder.runDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile,
 					Processor_Seq.exceptionGenerated, Processor_Seq.exception, Processor_Seq.initialRegisterFile,
 					Processor_Seq.finalRegisterFile, Processor_Seq.initialMemory, Processor_Seq.finalMemory);

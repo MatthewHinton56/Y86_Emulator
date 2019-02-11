@@ -137,7 +137,121 @@ public class Terminal {
 							control.pipeline(compiledText);
 					}
 					break;
+				case "lc":
+					if (parsedInput.length >= 2) {
+						fileText = loadFile(parsedInput[1]);
+						fileLoad = (fileText != null);
+						compiledText = "";
+						programCompiled = false;
+						programInitialized = false;
+						compiledText = compile(fileLoad, fileText);
+						programCompiled = (compiledText != null);
+						programInitialized = false;
+					} else {
+						System.out.println("No file given");
+					}
+					break;
 
+				case "lci":
+					if (parsedInput.length >= 2) {
+						fileText = loadFile(parsedInput[1]);
+						fileLoad = (fileText != null);
+						compiledText = "";
+						programCompiled = false;
+						programInitialized = false;
+						compiledText = compile(fileLoad, fileText);
+						programCompiled = (compiledText != null);
+						programInitialized = false;
+						if (programCompiled) {
+							processFlags(parsedInput);
+							control.initialize();
+							programInitialized = true;
+						} else {
+							System.out.println("No Program is currently compiled");
+						}
+					} else {
+						System.out.println("No file given");
+					}
+					break;
+
+				case "ci":
+					compiledText = compile(fileLoad, fileText);
+					programCompiled = (compiledText != null);
+					programInitialized = false;
+					if (programCompiled) {
+						processFlags(parsedInput);
+						control.initialize();
+						programInitialized = true;
+					} else {
+						System.out.println("No Program is currently compiled");
+					}
+					break;
+
+				case "lcir":
+					if (parsedInput.length >= 2) {
+						fileText = loadFile(parsedInput[1]);
+						fileLoad = (fileText != null);
+						compiledText = "";
+						programCompiled = false;
+						programInitialized = false;
+						compiledText = compile(fileLoad, fileText);
+						programCompiled = (compiledText != null);
+						programInitialized = false;
+						if (programCompiled) {
+							processFlags(parsedInput);
+							control.initialize();
+							programInitialized = true;
+							if (programInitialized) {
+								processFlags(parsedInput);
+								control.run();
+							} else {
+								System.out.println("Program is not initialized");
+							}
+						} else {
+							System.out.println("No Program is currently compiled");
+						}
+					} else {
+						System.out.println("No file given");
+					}
+					break;
+
+				case "cir":
+					programCompiled = false;
+					programInitialized = false;
+					compiledText = compile(fileLoad, fileText);
+					programCompiled = (compiledText != null);
+					programInitialized = false;
+					if (programCompiled) {
+						processFlags(parsedInput);
+						control.initialize();
+						programInitialized = true;
+						if (programInitialized) {
+							processFlags(parsedInput);
+							control.run();
+						} else {
+							System.out.println("Program is not initialized");
+						}
+					} else {
+						System.out.println("No Program is currently compiled");
+					}
+					break;
+				
+				case "ir":
+					if (programCompiled) {
+						processFlags(parsedInput);
+						control.initialize();
+						programInitialized = true;
+						if (programInitialized) {
+							processFlags(parsedInput);
+							control.run();
+						} else {
+							System.out.println("Program is not initialized");
+						}
+					} else {
+						System.out.println("No Program is currently compiled");
+					}
+					break;	
+					
 				default:
 					if (input.length() > 0) {
 						System.out.println("Invalid command: " + input);
@@ -150,8 +264,11 @@ public class Terminal {
 
 	private static void processFlags(String[] parsedInput) {
 		if (parsedInput.length > 1) {
-			if (parsedInput[1].equals("-t")) {
-				switch (parsedInput[2]) {
+			for(int i = 0; i < parsedInput.length; i++)
+		{
+
+			if (parsedInput[i].equals("-t") && i + 1 < parsedInput.length) {
+				switch (parsedInput[i + 1]) {
 				case HEX:
 					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.HEX;
 					break;
@@ -165,9 +282,10 @@ public class Terminal {
 					DisplayBuilder.DISPLAY_SETTING = DisplayBuilder.UNSIGNED;
 					break;
 				default:
-					System.out.println("Invalid modifier: " + parsedInput[2] + ". Default setting used");
+					System.out.println("Invalid modifier: " + parsedInput[i + 1] + ". Default setting used");
 				}
-			}
+			}	
+		}
 		}
 
 	}
