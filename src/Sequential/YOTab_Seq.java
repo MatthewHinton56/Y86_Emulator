@@ -51,7 +51,6 @@ public class YOTab_Seq extends YOTab {
 	 * @param emb       the menu bar to be read from
 	 */
 	public YOTab_Seq(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
-		Processor_Seq.clear();
 		this.parent = parent;
 		border = new BorderPane();
 		textBorder = new BorderPane();
