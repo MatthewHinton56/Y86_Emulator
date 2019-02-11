@@ -69,7 +69,7 @@ public class YOTab extends Tab {
 		initialize.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				if(emb.RDI_Input.isSelected() || emb.RSI_Input.isSelected())
-					Processor.initialize(emb.RDI_Input.isSelected(),((RadioMenuItem)emb.RDIGroup.getSelectedToggle()).getText()
+					Processor.initializeInputs(emb.RDI_Input.isSelected(),((RadioMenuItem)emb.RDIGroup.getSelectedToggle()).getText()
 							,emb.store_RDI_Length_RDX.isSelected(), emb.RSI_Input.isSelected(),((RadioMenuItem)emb.RSIGroup.getSelectedToggle()).getText()
 							,emb.store_RSI_Length_RCX.isSelected());
 				else 

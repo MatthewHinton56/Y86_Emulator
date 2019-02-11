@@ -6,6 +6,10 @@ public class Instruction {
 	public static final HashMap<String, String> BYTE_TO_FUNCTION = new HashMap<String, String>();
 	public static final HashMap<String, String> NIBBLE_TO_REGISTER = new HashMap<String, String>();
 	public static final HashMap<String, String> INSTRUCTION_TO_ARCHETYPE = new HashMap<String, String>();
+
+	/**
+	 * sets up maps and instruction archetypes
+	 */
 	static {
 		generateMaps();
 		generateInstructionArchetypes();
@@ -14,13 +18,18 @@ public class Instruction {
 	DoubleWord immediate;
 	String rA, rB;
 	DoubleWord valA, valB, valE, valM, valP, standardValPIncrement;
-	//0 - RS1Val, 1 - RS2Val, 2 - EVal, 3 - MVal
+	// 0 - RS1Val, 1 - RS2Val, 2 - EVal, 3 - MVal
 	String instruction;
 	boolean memory, conditionMet;
 	public boolean stop;
 	DoubleWord address;
 
-
+	/**
+	 * Creates an instruction using the instruction Array
+	 * 
+	 * @param instructionArray the array to process
+	 * @param address          the address it was read from
+	 */
 	public Instruction(BYTE[] instructionArray, DoubleWord address) {
 		this.address = address;
 		String hexFunction = instructionArray[0].generateHex();
@@ -29,31 +38,30 @@ public class Instruction {
 		String hexRegister = null;
 		try {
 			hexRegister = instructionArray[1].generateHex();
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			System.out.println(Arrays.toString(instructionArray));
 		}
-		rA = NIBBLE_TO_REGISTER.get(hexRegister.substring(0,1));
+		rA = NIBBLE_TO_REGISTER.get(hexRegister.substring(0, 1));
 		rB = NIBBLE_TO_REGISTER.get(hexRegister.substring(1));
 		String imm = "";
-		for(int i = immediateStart; i <= immediateStart+7; i++)
-			imm+= instructionArray[i];
+		for (int i = immediateStart; i <= immediateStart + 7; i++)
+			imm += instructionArray[i];
 		immediate = new DoubleWord(imm, true);
 		memory = inArray(MEMORY_FUNCTIONS, instruction);
-		if(inArray(InstructionBuilder.ONE_BYTE, instruction))
+		if (inArray(InstructionBuilder.ONE_BYTE, instruction))
 			standardValPIncrement = new DoubleWord(1);
-		else if(inArray(InstructionBuilder.NINE_BYTE, instruction))
+		else if (inArray(InstructionBuilder.NINE_BYTE, instruction))
 			standardValPIncrement = new DoubleWord(9);
-		else if(inArray(InstructionBuilder.TEN_BYTE, instruction))
+		else if (inArray(InstructionBuilder.TEN_BYTE, instruction))
 			standardValPIncrement = new DoubleWord(10);
-		else 
+		else
 			standardValPIncrement = new DoubleWord(2);
 		conditionMet = true;
 	}
 
-
-
-
+	/**
+	 * Creates the archetypal form of each instruction
+	 */
 	private static void generateInstructionArchetypes() {
 		INSTRUCTION_TO_ARCHETYPE.put("halt", "halt");
 		INSTRUCTION_TO_ARCHETYPE.put("ret", "ret");
@@ -85,9 +93,9 @@ public class Instruction {
 		INSTRUCTION_TO_ARCHETYPE.put("popq", "cmovge rA");
 	}
 
-
-
-
+	/**
+	 * The various functions used to create instructions
+	 */
 	private static void generateMaps() {
 		BYTE_TO_FUNCTION.put("00", "halt");
 		BYTE_TO_FUNCTION.put("10", "nop");
@@ -135,29 +143,40 @@ public class Instruction {
 		NIBBLE_TO_REGISTER.put("F", "No register");
 	}
 
+	/**
+	 * Checks if a value is in an array
+	 * 
+	 * @param array the array to scan
+	 * @param val   the value to search for
+	 * @return if the val is in the array
+	 */
 	public static boolean inArray(String[] array, String val) {
-		for(String s: array)
-			if(s.equals(val))
+		for (String s : array)
+			if (s.equals(val))
 				return true;
 		return false;
 	}
 
-	public static final String[] IMMEDIATE_SPECIAL_CASE = {"call", "jmp", "jge", "jg", "je", "jne", "jl", "jle"}; 
-	public static final String[] MEMORY_FUNCTIONS = {"rmmovq","mrmovq", "call", "ret", "popq","pushq"};
+	public static final String[] IMMEDIATE_SPECIAL_CASE = { "call", "jmp", "jge", "jg", "je", "jne", "jl", "jle" };
+	public static final String[] MEMORY_FUNCTIONS = { "rmmovq", "mrmovq", "call", "ret", "popq", "pushq" };
 
-
+	/**
+	 * Creates a display of the instruction, for printing
+	 * 
+	 * @return the string representation of the instruction
+	 */
 	public String buildDisplayInstruction() {
 		String archetype = Instruction.INSTRUCTION_TO_ARCHETYPE.get(instruction);
-		if(this.rA != null)
+		if (this.rA != null)
 			archetype = archetype.replace("rA", this.rA);
-		if(this.rB != null)
+		if (this.rB != null)
 			archetype = archetype.replace("rB", this.rB);
-		if(this.immediate != null)
-			archetype = archetype.replace("Dest", "0x"+this.immediate.displayToString());
-		if(this.immediate != null)
-			archetype = archetype.replace("D", "0x"+this.immediate.displayToString());
-		if(this.immediate != null)
-			archetype = archetype.replace("V", "0x"+this.immediate.displayToString());
+		if (this.immediate != null)
+			archetype = archetype.replace("Dest", "0x" + this.immediate.displayToString());
+		if (this.immediate != null)
+			archetype = archetype.replace("D", "0x" + this.immediate.displayToString());
+		if (this.immediate != null)
+			archetype = archetype.replace("V", "0x" + this.immediate.displayToString());
 		return archetype;
 	}
 }
