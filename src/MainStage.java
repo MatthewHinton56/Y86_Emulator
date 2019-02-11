@@ -7,19 +7,20 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class MainStage extends Application implements EventHandler<ActionEvent>{
-	
+public class MainStage extends Application implements EventHandler<ActionEvent> {
+
 	public YSTab ystab;
 	public YOTab yotab;
 	public TabPane pane;
 	public EmulatorMenuBar emb;
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
 		pane = new TabPane();
-		//ystab = new YSTab(pane,"test","",this);
-		//pane.getTabs().add(ystab);
-		//Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+		// ystab = new YSTab(pane,"test","",this);
+		// pane.getTabs().add(ystab);
+		// Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 		emb = new EmulatorMenuBar(this);
 		BorderPane border = new BorderPane();
 		border.setTop(emb);
@@ -31,7 +32,7 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		primaryStage.setMinWidth(750);
 		primaryStage.setTitle("Y86 Emulator");
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("y86icon.png")));
-		//primaryStage.setResizable(false);
+		// primaryStage.setResizable(false);
 		primaryStage.show();
 	}
 
@@ -42,22 +43,21 @@ public class MainStage extends Application implements EventHandler<ActionEvent>{
 		ystab.output.setText("Compiler Output:\n");
 		String output;
 		try {
-		String[] compilerOutput = new String[1];
-		compilerOutput[0] = "";
-		output = Compiler.compile(input, compilerOutput);
-		if(output.length() == 0) {
-			ystab.output.setText(ystab.output.getText() + "\n Nothing provided to compile");
-		} else {
-		ystab.output.setText(ystab.output.getText() + compilerOutput[0]);	
-		ystab.output.setText(ystab.output.getText() + "Assembly compiled and ready for emulation in yotab" );
-		
-		Processor.clear();
-		yotab = new YOTab(pane,ystab.fileName.substring(0,ystab.fileName.indexOf(".")) +".yo", output, emb);
-		yotab.refresh();
-		pane.getTabs().add(yotab);
-		}
-		}
-		catch(IllegalArgumentException e) {
+			String[] compilerOutput = new String[1];
+			compilerOutput[0] = "";
+			output = Compiler.compile(input, compilerOutput);
+			if (output.length() == 0) {
+				ystab.output.setText(ystab.output.getText() + "\n Nothing provided to compile");
+			} else {
+				ystab.output.setText(ystab.output.getText() + compilerOutput[0]);
+				ystab.output.setText(ystab.output.getText() + "Assembly compiled and ready for emulation in yotab");
+
+				Processor.clear();
+				yotab = new YOTab(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output, emb);
+				yotab.refresh();
+				pane.getTabs().add(yotab);
+			}
+		} catch (IllegalArgumentException e) {
 			ystab.output.setText(ystab.output.getText() + "Compiler Error Output:\n" + e.getMessage());
 		}
 	}
