@@ -87,7 +87,7 @@ The Y86 possesses a terminal interface to run the program as well
 
 ## Binaries
 
-[Terminal Implementation](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3/Y86_Emulator_T.jar "Y86_Emulator.jar")
+[Terminal Implementation](https://github.com/MatthewHinton56/Y86_Emulator/releases/download/v1.3.1/Y86_Emulator_T.jar "Y86_Emulator.jar")
 
 # Contact
 If errors do occur, or you see an area that can be improved, please do not hesistate to contact me at mjh4395@utexas.edu or list an issue here on github so I can correct it
