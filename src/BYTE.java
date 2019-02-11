@@ -28,7 +28,7 @@ public class BYTE extends LittleEndian {
 		super(getByte(hex));
 	}
 	
-	public HalfWord extendToHalfWord(boolean signed) {
+	public Word extendToHalfWord(boolean signed) {
 		 String hex = this.generateHex();
 		 if(signed) {
 			 boolean neg = this.getSign();
