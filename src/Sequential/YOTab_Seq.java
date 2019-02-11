@@ -1,4 +1,5 @@
 package Sequential;
+
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -9,13 +10,13 @@ import BaseEmulator.DoubleWord;
 import BaseEmulator.LittleEndian;
 import BaseEmulator.Memory;
 import GUI.EmulatorMenuBar;
+import GUI.YOTab;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -24,7 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 
-public class YOTab_Seq extends Tab {
+public class YOTab_Seq extends YOTab {
 
 	String fileName;
 	Button step, run, initialize;
@@ -50,6 +51,7 @@ public class YOTab_Seq extends Tab {
 	 * @param emb       the menu bar to be read from
 	 */
 	public YOTab_Seq(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
+		Processor_Seq.clear();
 		this.parent = parent;
 		border = new BorderPane();
 		textBorder = new BorderPane();
@@ -209,11 +211,6 @@ public class YOTab_Seq extends Tab {
 		}
 
 	}
-	
-	
-	
-	
-	
 
 	/**
 	 * Creates a display entry for step
@@ -226,37 +223,36 @@ public class YOTab_Seq extends Tab {
 					outputDisplay.setText(
 							outputDisplay.getText() + "The processor exited with:\n" + Processor_Seq.exception + "\n");
 				else {
-					
-					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Seq.PC, Processor_Seq.completedInstruction,
-							Processor_Seq.registerFile, Processor_Seq.exceptionGenerated, Processor_Seq.exception, 
-							Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile, 
+
+					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Seq.PC,
+							Processor_Seq.completedInstruction, Processor_Seq.registerFile,
+							Processor_Seq.exceptionGenerated, Processor_Seq.exception,
+							Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile,
 							Processor_Seq.initialMemory, Processor_Seq.finalMemory);
-					
+
 					outputDisplay.setText(outputDisplay.getText() + output);
 				}
 			} else {
-				String output = DisplayBuilder.stepDisplayBuilder(Processor_Seq.completedInstruction.address, Processor_Seq.completedInstruction, 
-						Processor_Seq.stepBeforeReg, Processor_Seq.stepAfterReg, Processor_Seq.stepBeforeMem, Processor_Seq.stepAfterMem);
+				String output = DisplayBuilder.stepDisplayBuilder(Processor_Seq.completedInstruction.address,
+						Processor_Seq.completedInstruction, Processor_Seq.stepBeforeReg, Processor_Seq.stepAfterReg,
+						Processor_Seq.stepBeforeMem, Processor_Seq.stepAfterMem);
 				outputDisplay.setText(outputDisplay.getText() + output);
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates a run display entry
 	 */
 	protected void runDisplay() {
 		if (Processor_Seq.initialized) {
-			String output = DisplayBuilder.runDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile, 
-					Processor_Seq.exceptionGenerated, Processor_Seq.exception, 
-					Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile, 
-					Processor_Seq.initialMemory, Processor_Seq.finalMemory);
+			String output = DisplayBuilder.runDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile,
+					Processor_Seq.exceptionGenerated, Processor_Seq.exception, Processor_Seq.initialRegisterFile,
+					Processor_Seq.finalRegisterFile, Processor_Seq.initialMemory, Processor_Seq.finalMemory);
 			outputDisplay.setText(outputDisplay.getText() + output);
 		}
 	}
 
-	
-	
 	/**
 	 * Creates an initialize display entry
 	 */
@@ -266,10 +262,11 @@ public class YOTab_Seq extends Tab {
 			outputDisplay.setText(outputDisplay.getText()
 					+ "Program failed to initialize, check that all memory locations are valid");
 		} else {
-			outputDisplay.setText(outputDisplay.getText() + "PC: " + DisplayBuilder.initializeDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile));
+			outputDisplay.setText(outputDisplay.getText() + "PC: "
+					+ DisplayBuilder.initializeDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile));
 		}
 	}
-	
+
 	/**
 	 * Used to show which instruction is next in the sequential machine to be
 	 * executed

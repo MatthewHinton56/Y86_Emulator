@@ -14,7 +14,7 @@ public class DisplayBuilder {
 	public static final String SIGNED = "Signed";
 	public static final String HEXLE = "Hex LE";
 	public static String DISPLAY_SETTING = HEX;
-	
+
 	public static String displayText(LittleEndian val) {
 		switch (DISPLAY_SETTING) {
 		case SIGNED:
@@ -27,7 +27,7 @@ public class DisplayBuilder {
 			return "0x" + val.displayToString();
 		}
 	}
-	
+
 	/**
 	 * Uses the before and after images to create the dif tree, printing it
 	 * 
@@ -36,7 +36,8 @@ public class DisplayBuilder {
 	 * @param text   the type of difference
 	 * @return the string representation of the dif
 	 */
-	public static String memoryDifference(TreeMap<Long, DoubleWord> before, TreeMap<Long, DoubleWord> after, String text) {
+	public static String memoryDifference(TreeMap<Long, DoubleWord> before, TreeMap<Long, DoubleWord> after,
+			String text) {
 		String output = "Memory Differences: " + text + ":\n";
 		ArrayList<Long> dif = Memory.getDif(before, after);
 		for (Long l : dif) {
@@ -70,7 +71,7 @@ public class DisplayBuilder {
 		}
 		return output + "\n";
 	}
-	
+
 	/**
 	 * Uses the before and after images to create the dif tree, printing it
 	 * 
@@ -89,7 +90,7 @@ public class DisplayBuilder {
 		}
 		return output + "\n";
 	}
-	
+
 	/**
 	 * Creates a register display string
 	 * 
@@ -102,39 +103,37 @@ public class DisplayBuilder {
 		}
 		return output + "\n";
 	}
-	
+
 	/**
 	 * Generates an initialize display
 	 * 
 	 * @param PC the current PC
 	 * @return the initialize string
 	 */
-	public static String initializeDisplayBuilder(DoubleWord PC, RegisterFile rf)
-	{
+	public static String initializeDisplayBuilder(DoubleWord PC, RegisterFile rf) {
 		String output = "";
-		output +=  "PC: " + displayText(Processor_Seq.PC) + "\n\n";
+		output += "PC: " + displayText(Processor_Seq.PC) + "\n\n";
 		output += registerDisplay(rf) + "\n";
 		output += memoryDisplay() + "\n";
 		return output;
 	}
-	
+
 	/**
 	 * Creates a run Display text output
 	 * 
-	 * @param PC the counter Program counter
-	 * @param rf the register file
-	 * @param exceptionGenerated flag for exception generation
-	 * @param exception the exception generated 
+	 * @param PC                  the counter Program counter
+	 * @param rf                  the register file
+	 * @param exceptionGenerated  flag for exception generation
+	 * @param exception           the exception generated
 	 * @param initialRegisterFile initial register image
-	 * @param finalRegisterFile final register image
-	 * @param initialMemory initial memory image 
-	 * @param finalMemory final memory image
+	 * @param finalRegisterFile   final register image
+	 * @param initialMemory       initial memory image
+	 * @param finalMemory         final memory image
 	 * @return the string output of run
 	 */
 	public static String runDisplayBuilder(DoubleWord PC, RegisterFile rf, boolean exceptionGenerated, String exception,
 			TreeMap<String, DoubleWord> initialRegisterFile, TreeMap<String, DoubleWord> finalRegisterFile,
-			TreeMap<Long, DoubleWord> initialMemory, TreeMap<Long, DoubleWord> finalMemory)
-	{
+			TreeMap<Long, DoubleWord> initialMemory, TreeMap<Long, DoubleWord> finalMemory) {
 		String output = "";
 		output += "RUN:\n";
 		output += "PC: " + displayText(PC) + "\n";
@@ -146,22 +145,21 @@ public class DisplayBuilder {
 		output += memoryDifference(initialMemory, finalMemory, "FINAL");
 		return output;
 	}
-	
+
 	/**
 	 * Step output display after one step execution, and HLT was not generated
 	 * 
-	 * @param address the address of completed instruction
-	 * @param completed the completed instruction
+	 * @param address       the address of completed instruction
+	 * @param completed     the completed instruction
 	 * @param stepBeforeReg the image prior to step - reg
-	 * @param stepAfterReg the image after the step - reg
+	 * @param stepAfterReg  the image after the step - reg
 	 * @param stepBeforeMem the image prior to step - mem
-	 * @param stepAfterMem the image after the step - mem
+	 * @param stepAfterMem  the image after the step - mem
 	 * @return the output string of the step
 	 */
 	public static String stepDisplayBuilder(DoubleWord address, Instruction completed,
 			TreeMap<String, DoubleWord> stepBeforeReg, TreeMap<String, DoubleWord> stepAfterReg,
-			TreeMap<Long, DoubleWord> stepBeforeMem, TreeMap<Long, DoubleWord> stepAfterMem)
-	{
+			TreeMap<Long, DoubleWord> stepBeforeMem, TreeMap<Long, DoubleWord> stepAfterMem) {
 		String output = "";
 		output += "PC: " + DisplayBuilder.displayText(address) + "\n";
 		output += "Completed Instruction: " + completed.buildDisplayInstruction() + "\n";
@@ -170,25 +168,25 @@ public class DisplayBuilder {
 		output += DisplayBuilder.memoryDifference(stepBeforeMem, stepAfterMem, "STEP");
 		return output;
 	}
-	
+
 	/**
 	 * Creates a step completion Display text output
 	 * 
-	 * @param PC the counter Program counter
-	 * @param completed the completed instruction
-	 * @param rf the register file
-	 * @param exceptionGenerated flag for exception generation
-	 * @param exception the exception generated 
+	 * @param PC                  the counter Program counter
+	 * @param completed           the completed instruction
+	 * @param rf                  the register file
+	 * @param exceptionGenerated  flag for exception generation
+	 * @param exception           the exception generated
 	 * @param initialRegisterFile initial register image
-	 * @param finalRegisterFile final register image
-	 * @param initialMemory initial memory image 
-	 * @param finalMemory final memory image
+	 * @param finalRegisterFile   final register image
+	 * @param initialMemory       initial memory image
+	 * @param finalMemory         final memory image
 	 * @return the string output of run
 	 */
-	public static String stepCompletionDisplayBuilder(DoubleWord PC, Instruction completed, RegisterFile rf, boolean exceptionGenerated, 
-			String exception, TreeMap<String, DoubleWord> initialRegisterFile, TreeMap<String, DoubleWord> finalRegisterFile,
-			TreeMap<Long, DoubleWord> initialMemory, TreeMap<Long, DoubleWord> finalMemory)
-	{
+	public static String stepCompletionDisplayBuilder(DoubleWord PC, Instruction completed, RegisterFile rf,
+			boolean exceptionGenerated, String exception, TreeMap<String, DoubleWord> initialRegisterFile,
+			TreeMap<String, DoubleWord> finalRegisterFile, TreeMap<Long, DoubleWord> initialMemory,
+			TreeMap<Long, DoubleWord> finalMemory) {
 		String output = "";
 		output += "The program has completed its execution:\n";
 		output += "PC: " + DisplayBuilder.displayText(PC) + "\n";
@@ -199,5 +197,5 @@ public class DisplayBuilder {
 		output += memoryDifference(initialMemory, finalMemory, "FINAL");
 		return output;
 	}
-	
+
 }
