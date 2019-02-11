@@ -16,7 +16,7 @@ public class Processor_Seq {
 	
 	public static final RegisterFile registerFile = new RegisterFile();
 	public static Instruction currentInstruction;
-	public static DoubleWord PC;
+	public static DoubleWord PC = new DoubleWord(0);
 	public static String status = "HLT";
 	public static TreeMap<String, DoubleWord> initialRegisterFile, stepBeforeReg, stepAfterReg, finalRegisterFile;
 	public static TreeMap<Long, DoubleWord> initialMemory, stepBeforeMem, stepAfterMem, finalMemory;

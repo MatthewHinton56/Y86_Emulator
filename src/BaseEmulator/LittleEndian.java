@@ -39,7 +39,6 @@ public abstract class LittleEndian {
 				val += ((long) Math.pow(2, pos));
 			}
 		}
-		System.out.println(val);
 		return Long.toUnsignedString(val);
 	}
 
@@ -241,7 +240,6 @@ public abstract class LittleEndian {
 	 */
 	public static boolean[] getByte(String hex) {
 		hex = LittleEndian.hexFixer(hex, 8);
-		System.out.println(hex);
 		boolean[] byteArray = new boolean[8];
 		char[] nibbles = hex.toCharArray();
 		System.arraycopy(getNibble(nibbles[1]), 0, byteArray, 0, 4);

@@ -156,7 +156,9 @@ public class YOTab_Seq extends YOTab {
 		TextField tx1 = new TextField("PC");
 		tx1.setEditable(false);
 		registerDisplay.add(tx1, 0, row);
-		String PC = "0x" + Processor_Seq.PC.displayToString();
+		
+		String PC = (Processor_Seq.PC == null) ? "0"  : Processor_Seq.PC.displayToString();
+		PC = "0x" + PC;
 		TextField tx2 = new TextField(PC);
 		tx2.setEditable(false);
 		registerDisplay.add(tx2, 1, row);
