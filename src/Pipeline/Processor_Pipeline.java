@@ -487,25 +487,23 @@ public class Processor_Pipeline {
 	 */
 	public static void run() {
 		while (status.equals("AOK")) {
+			writeBack_control();
 			try {
-				fetch_control();
+				memory_control();
 			} catch (MemoryException e) {
 				exception = e.getMessage();
 				exceptionGenerated = true;
 				status = "ADR";
 			}
 			if (status.equals("AOK")) {
-				decode_control();
 				execute_control();
+				decode_control();
 				try {
-					memory_control();
+					fetch_control();
 				} catch (MemoryException e) {
 					exception = e.getMessage();
 					exceptionGenerated = true;
 					status = "ADR";
-				}
-				if (status.equals("AOK")) {
-					writeBack_control();
 				}
 			}
 		}
