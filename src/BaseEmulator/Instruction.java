@@ -26,8 +26,13 @@ public class Instruction {
 	// 0 - RS1Val, 1 - RS2Val, 2 - EVal, 3 - MVal
 	public String instruction;
 	public boolean memory, conditionMet;
+	public boolean loaded;
 	public boolean stop;
 	public DoubleWord address;
+	public boolean bubble;
+	
+	public HashMap<String, DoubleWord> dependencyVal;
+	public HashMap<String, Boolean> dependencyLoaded;
 
 	/**
 	 * Creates an instruction using the instruction Array
@@ -36,10 +41,12 @@ public class Instruction {
 	 * @param address          the address it was read from
 	 */
 	public Instruction(BYTE[] instructionArray, DoubleWord address) {
+		bubble = false;
 		this.address = address;
 		String hexFunction = instructionArray[0].generateHex();
 		instruction = BYTE_TO_FUNCTION.get(hexFunction);
 		int immediateStart = (inArray(IMMEDIATE_SPECIAL_CASE, instruction)) ? 1 : 2;
+		loaded = (inArray(MEMORY_DEPENDENCY, instruction)) ? false : true;
 		String hexRegister = null;
 		try {
 			hexRegister = instructionArray[1].generateHex();
@@ -48,6 +55,11 @@ public class Instruction {
 		}
 		rA = NIBBLE_TO_REGISTER.get(hexRegister.substring(0, 1));
 		rB = NIBBLE_TO_REGISTER.get(hexRegister.substring(1));
+		if(inArray(InstructionBuilder.ONE_BYTE, instruction))
+		{
+			rA = "";
+			rB = "";
+		}
 		String imm = "";
 		for (int i = immediateStart; i <= immediateStart + 7; i++)
 			imm += instructionArray[i];
@@ -62,8 +74,16 @@ public class Instruction {
 		else
 			standardValPIncrement = new DoubleWord(2);
 		conditionMet = true;
+		if(inArray(STACK_INSTRUCTIONS, instruction))
+			rB = "%rsp";
+		if(instruction.equals("call") || instruction.equals("ret"))
+			rA = "No register";
 	}
-
+	
+	public Instruction() {
+		bubble = true;
+		address = new DoubleWord(-1);
+	}
 	/**
 	 * Creates the archetypal form of each instruction
 	 */
@@ -164,7 +184,8 @@ public class Instruction {
 
 	public static final String[] IMMEDIATE_SPECIAL_CASE = { "call", "jmp", "jge", "jg", "je", "jne", "jl", "jle" };
 	public static final String[] MEMORY_FUNCTIONS = { "rmmovq", "mrmovq", "call", "ret", "popq", "pushq" };
-
+	public static final String[] MEMORY_DEPENDENCY = { "mrmovq", "ret", "popq"};
+	public static final String[] STACK_INSTRUCTIONS = {"popq", "pushq", "ret", "call" };
 	/**
 	 * Creates a display of the instruction, for printing
 	 * 
@@ -184,4 +205,35 @@ public class Instruction {
 			archetype = archetype.replace("V", "0x" + this.immediate.displayToString());
 		return archetype;
 	}
+	
+	public static final String[] RA_AND_RSP = { "pop"};
+	public static final String[] RSP = {"pushq", "call", "ret" };
+	public static final String[] RA = {"mrmovq"};
+	public static final String[] NONE = {"jmp", "jge", "jg", "je", "jne", "jl", "jle", "rmmovq", "nop", "halt"};
+	
+	public void getDependencies()
+	{
+		if(inArray(RA_AND_RSP, instruction)) {
+			dependencyVal.put("%rsp", new DoubleWord());
+			dependencyVal.put(rA, new DoubleWord());
+			dependencyLoaded.put("%rsp", true);
+			dependencyLoaded.put(rA, false);
+		}
+		else if(inArray(RSP, instruction)) {
+			dependencyVal.put("%rsp", new DoubleWord());
+			dependencyLoaded.put("%rsp", true);
+		}
+		else if(inArray(RA, instruction)) {
+			dependencyVal.put(rA, new DoubleWord());
+			dependencyLoaded.put(rA, false);
+		}
+		else if(inArray(NONE, instruction)) {}
+		else {
+			dependencyVal.put(rB, new DoubleWord());
+			dependencyLoaded.put(rB, true);
+		}
+
+		
+	}
+	
 }

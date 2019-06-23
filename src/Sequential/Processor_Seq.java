@@ -44,13 +44,6 @@ public class Processor_Seq {
 	public static void decode() {
 		currentInstruction.valA = registerFile.get(currentInstruction.rA);
 		currentInstruction.valB = registerFile.get(currentInstruction.rB);
-		String instruction = currentInstruction.instruction;
-		if (instruction.equals("ret") || instruction.equals("pushq") || instruction.equals("popq")
-				|| instruction.equals("call")) {
-			currentInstruction.valB = registerFile.get("%rsp");
-		}
-		if (instruction.equals("ret"))
-			currentInstruction.valA = registerFile.get("%rsp");
 
 	}
 

@@ -21,7 +21,7 @@ public class Memory {
 	public static final HashSet<Long> accessibleMemory = new HashSet<Long>();
 	public static final Long RDI_POSITION = 0xA000000000000000L;
 	public static final Long RSI_POSITION = 0xB000000000000000L;
-
+	public static final long INVALID_ADDRESS = -1;
 	/**
 	 * Gets the instruction in memory at position
 	 * 

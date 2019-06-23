@@ -287,7 +287,7 @@ public class Compiler {
 		DoubleWord dw;
 		if (l.splitLine.length != 2)
 			throw new IllegalArgumentException(
-					"Invalid instruction argument - mrmovq requires 1 register and 1 memory function\n"
+					"Invalid instruction argument - quad requires 1 input\n"
 							+ "Error occured on the line: " + l.line);
 		if (TAG_TO_ADDRESS.containsKey(l.splitLine[1])) {
 			if (!TAG_TO_ADDRESS.containsKey(l.splitLine[1]))
