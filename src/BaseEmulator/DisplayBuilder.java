@@ -160,10 +160,10 @@ public class DisplayBuilder {
 	public static String stepDisplayBuilder(DoubleWord address, Instruction completed,
 			TreeMap<String, DoubleWord> stepBeforeReg, TreeMap<String, DoubleWord> stepAfterReg,
 			TreeMap<Long, DoubleWord> stepBeforeMem, TreeMap<Long, DoubleWord> stepAfterMem) {
+		
 		String output = "";
 		output += "PC: " + DisplayBuilder.displayText(address) + "\n";
 		output += "Completed Instruction: " + completed.buildDisplayInstruction() + "\n";
-		output += DisplayBuilder.registerDifference(Processor_Seq.stepBeforeReg, Processor_Seq.stepAfterReg, "STEP");
 		output += DisplayBuilder.registerDifference(stepBeforeReg, stepAfterReg, "STEP");
 		output += DisplayBuilder.memoryDifference(stepBeforeMem, stepAfterMem, "STEP");
 		return output;

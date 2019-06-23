@@ -176,10 +176,10 @@ public class Processor_Seq {
 			break;
 		case "popq":
 		case "ret":
-			registerFile.set(currentInstruction.rA, currentInstruction.valM);
 		case "call":
 		case "pushq":
 			registerFile.set("%rsp", currentInstruction.valE);
+			registerFile.set(currentInstruction.rA, currentInstruction.valM);
 			break;
 		}
 	}
@@ -275,7 +275,7 @@ public class Processor_Seq {
 			Processor_Seq.stepAfterReg = Processor_Seq.registerFile.createImage();
 		} else {
 			Processor_Seq.stepBeforeMem = Processor_Seq.finalMemory = Memory.createImage();
-			Processor_Seq.stepBeforeReg = Processor_Seq.finalRegisterFile = Processor_Seq.registerFile.createImage();
+			Processor_Seq.stepAfterReg = Processor_Seq.finalRegisterFile = Processor_Seq.registerFile.createImage();
 		}
 	}
 

@@ -78,6 +78,7 @@ public class Instruction {
 			rB = "%rsp";
 		if(instruction.equals("call") || instruction.equals("ret"))
 			rA = "No register";
+		getDependencies();
 	}
 	
 	public Instruction() {
@@ -211,8 +212,12 @@ public class Instruction {
 	public static final String[] RA = {"mrmovq"};
 	public static final String[] NONE = {"jmp", "jge", "jg", "je", "jne", "jl", "jle", "rmmovq", "nop", "halt"};
 	
+	public static final String[] CONDITIONAL_JUMP =  {"jge", "jg", "je", "jne", "jl", "jle"};
+	public static final String[] CONDITIONAL_MOVE =  {"cmovge", "cmovg", "cmove", "cmovne", "cmovl", "cmovle"};
 	public void getDependencies()
 	{
+		dependencyVal = new HashMap<String, DoubleWord>();
+		dependencyLoaded = new HashMap<String, Boolean>();
 		if(inArray(RA_AND_RSP, instruction)) {
 			dependencyVal.put("%rsp", new DoubleWord());
 			dependencyVal.put(rA, new DoubleWord());
@@ -235,5 +240,13 @@ public class Instruction {
 
 		
 	}
+	@Override
+	public String toString() {
+		if(bubble)
+			return "Bubble";
+		else
+			return instruction;
+	}
+	
 	
 }

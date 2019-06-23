@@ -22,9 +22,6 @@ public class MainStage extends Application implements EventHandler<ActionEvent> 
 	public void start(Stage primaryStage) throws Exception {
 
 		pane = new TabPane();
-		// ystab = new YSTab(pane,"test","",this);
-		// pane.getTabs().add(ystab);
-		// Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 		emb = new EmulatorMenuBar(this);
 		BorderPane border = new BorderPane();
 		border.setTop(emb);
@@ -36,7 +33,6 @@ public class MainStage extends Application implements EventHandler<ActionEvent> 
 		primaryStage.setMinWidth(750);
 		primaryStage.setTitle("Y86 Emulator");
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("y86icon.png")));
-		// primaryStage.setResizable(false);
 		primaryStage.show();
 	}
 
