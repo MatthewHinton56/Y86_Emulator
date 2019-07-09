@@ -348,7 +348,10 @@ public class Compiler {
 			String[] splitLine = line.split(" ");
 			String instruction = splitLine[0];
 			if (!line.contains("#") && line.length() > 0) {
-				if (instruction.startsWith(".")) {
+				if (instruction.contains(":")) {
+					TAG_TO_ADDRESS.put(splitLine[0].substring(0, splitLine[0].length() - 1), Long.toHexString(address));
+					inputLines.add(new Line(Long.toHexString(address), splitLine, sLine));
+				} else if (instruction.startsWith(".")) {
 					switch (instruction) {
 					case ".pos":
 						address = posPreProcess(address, sLine, splitLine);
@@ -361,10 +364,7 @@ public class Compiler {
 						address = alignPreProcess(address, sLine, splitLine);
 						break;
 					}
-				} else if (instruction.contains(":")) {
-					TAG_TO_ADDRESS.put(splitLine[0].substring(0, splitLine[0].length() - 1), Long.toHexString(address));
-					inputLines.add(new Line(Long.toHexString(address), splitLine, sLine));
-				} else {
+				}  else {
 					inputLines.add(new Line(Long.toHexString(address), splitLine, sLine));
 					address = calculateAddress(address, instruction);
 				}

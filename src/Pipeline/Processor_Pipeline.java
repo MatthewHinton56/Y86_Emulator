@@ -128,21 +128,21 @@ public class Processor_Pipeline {
 			if(!rBStatisfied)
 				instructions[NEXT_DECODE].valB = registerFile.get(instructions[NEXT_DECODE].rB);
 		}
-		System.out.println(instructions[NEXT_DECODE].instruction + " " + instructions[NEXT_DECODE].valA + " " + instructions[NEXT_DECODE].valB);
 		return true;
 	}
 	
 	public static void decode_control() {
-		if(!misprediction)
-		{
 			if(!instructions[NEXT_DECODE].bubble)
 				decode();
 			if(!mem_stall) {
 				addresses[EXECUTE_ADDRESS] = addresses[DECODE_ADDRESS];
 				instructions[NEXT_EXECUTE] = instructions[NEXT_DECODE];				
 			}
-
-		}
+			else
+			{
+				instructions[NEXT_EXECUTE] = new Instruction();
+				addresses[EXECUTE_ADDRESS] = new DoubleWord(-1);
+			}
 	}	
 
 
@@ -219,9 +219,9 @@ public class Processor_Pipeline {
 			if(!instructions[NEXT_EXECUTE].conditionMet)
 				bubbleStages();
 		}
-		if(Instruction.inArray(Instruction.CONDITIONAL_MOVE, instructions[NEXT_EXECUTE].instruction))
+		if (Instruction.inArray(Instruction.CONDITIONAL_MOVE, instructions[NEXT_EXECUTE].instruction))
 		{
-			if(!instructions[NEXT_EXECUTE].conditionMet)
+			if(instructions[NEXT_EXECUTE].conditionMet)
 				instructions[NEXT_EXECUTE].dependencyVal.put(instructions[NEXT_EXECUTE].rB, instructions[NEXT_EXECUTE].valA);
 			else
 				instructions[NEXT_EXECUTE].dependencyVal.put(instructions[NEXT_EXECUTE].rB, instructions[NEXT_EXECUTE].valB);
@@ -234,6 +234,7 @@ public class Processor_Pipeline {
 		addresses[FETCH_ADDRESS] = new DoubleWord(
 				ALU.IADD(addresses[EXECUTE_ADDRESS].bitArray, instructions[NEXT_EXECUTE].standardValPIncrement.bitArray));
 		misprediction = true;
+		ret_stall = mem_stall = temp_stall = false;
 	}
 
 	public static void execute_control() {
@@ -261,13 +262,13 @@ public class Processor_Pipeline {
 			case "mrmovq":
 				address = instructions[NEXT_MEMORY].valE.calculateValueSigned();
 				instructions[NEXT_MEMORY].valM = Memory.loadDoubleWord(address);
-				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valE);
+				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valM);
 				instructions[NEXT_MEMORY].dependencyLoaded.put(instructions[NEXT_MEMORY].rA, true);
 				break;
 			case "popq":
 				address = instructions[NEXT_MEMORY].valB.calculateValueSigned();
 				instructions[NEXT_MEMORY].valM = Memory.loadDoubleWord(address);
-				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valE);
+				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valM);
 				instructions[NEXT_MEMORY].dependencyLoaded.put(instructions[NEXT_MEMORY].rA, true);
 				break;
 			case "call":
@@ -275,16 +276,11 @@ public class Processor_Pipeline {
 				DoubleWord callReturn = new DoubleWord(
 						ALU.IADD(addresses[MEMORY_ADDRESS].bitArray, instructions[NEXT_MEMORY].standardValPIncrement.bitArray));
 				Memory.storeDoubleWord(address, callReturn);
-				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valE);
-				instructions[NEXT_MEMORY].dependencyLoaded.put(instructions[NEXT_MEMORY].rA, true);
 				break;
 			case "ret":
-				address = instructions[NEXT_MEMORY].valB.calculateValueSigned();// since map is used, negative are allowed,
-				System.out.println(address);												// rather than dealing with signed/unsigned,
+				address = instructions[NEXT_MEMORY].valB.calculateValueSigned();// since map is used, negative are allowed,												// rather than dealing with signed/unsigned,
 				// as it essentially the same value.
 				instructions[NEXT_MEMORY].valM = Memory.loadDoubleWord(address);
-				instructions[NEXT_MEMORY].dependencyVal.put(instructions[NEXT_MEMORY].rA, instructions[NEXT_MEMORY].valE);
-				instructions[NEXT_MEMORY].dependencyLoaded.put(instructions[NEXT_MEMORY].rA, true);
 				instructions[NEXT_MEMORY].valP = instructions[NEXT_MEMORY].valM;
 				addresses[FETCH_ADDRESS] = 	instructions[NEXT_MEMORY].valP;
 				temp_stall = true;
@@ -334,7 +330,7 @@ public class Processor_Pipeline {
 		case "ret":
 		case "call":
 		case "pushq":
-			registerFile.set(instructions[NEXT_WRITEBACK].rA, instructions[NEXT_WRITEBACK].valE);
+			registerFile.set(instructions[NEXT_WRITEBACK].rB, instructions[NEXT_WRITEBACK].valE);
 			break;
 		}
 	}
@@ -470,7 +466,6 @@ public class Processor_Pipeline {
 				}
 			}
 		}
-		System.out.println(Arrays.toString(instructions) + " " + completedInstruction);
 		instruction_finished = false;
 		if (status.equals("AOK")) {
 			Processor_Pipeline.stepAfterMem = Memory.createImage();

@@ -213,7 +213,7 @@ public class Instruction {
 	public static final String[] NONE = {"jmp", "jge", "jg", "je", "jne", "jl", "jle", "rmmovq", "nop", "halt"};
 	
 	public static final String[] CONDITIONAL_JUMP =  {"jge", "jg", "je", "jne", "jl", "jle"};
-	public static final String[] CONDITIONAL_MOVE =  {"cmovge", "cmovg", "cmove", "cmovne", "cmovl", "cmovle"};
+	public static final String[] CONDITIONAL_MOVE =  {"cmovge", "cmovg", "cmove", "cmovne", "cmovl", "cmovle", "rrmovq"};
 	public void getDependencies()
 	{
 		dependencyVal = new HashMap<String, DoubleWord>();
