@@ -33,12 +33,14 @@ public abstract class LittleEndian {
 	 * @return the unsigned calculate value
 	 */
 	public String calculateValueUnSigned() {
-		long val = (bitArray[bitArray.length - 1]) ? ((long) Math.pow(2, bitArray.length - 1)) : 0;
-		for (int pos = 0; pos < bitArray.length - 1; pos++) {
+		long val =  0;
+		for (int pos = 0; pos < bitArray.length; pos++) {
 			if (bitArray[pos]) {
 				val += ((long) Math.pow(2, pos));
 			}
 		}
+		if(bitArray[63])
+			val += 1;
 		return Long.toUnsignedString(val);
 	}
 

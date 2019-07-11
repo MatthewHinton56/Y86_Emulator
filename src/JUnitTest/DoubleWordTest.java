@@ -5,6 +5,7 @@ package JUnitTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
@@ -103,7 +104,14 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testCalculateValueUnSigned() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord("FFFFFFFFFFFFFFFF", false);
+		DoubleWord zero = new DoubleWord("0000000000000000", false);
+		DoubleWord longMax = new DoubleWord("7FFFFFFFFFFFFFFF", false);
+		DoubleWord longMin = new DoubleWord("8000000000000000", false);
+		assertEquals(negativeOne.calculateValueUnSigned(), "18446744073709551615");
+		assertEquals(zero.calculateValueUnSigned(), "0");
+		assertEquals(longMax.calculateValueUnSigned(), "9223372036854775807");
+		assertEquals(longMin.calculateValueUnSigned(), "9223372036854775808");
 	}
 
 	/**
