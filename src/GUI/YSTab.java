@@ -50,7 +50,7 @@ public class YSTab extends Tab {
 		box.setPrefHeight(100);
 		compile = new Button("Compile");
 		compile.setOnAction(handler);
-		compile.setPrefHeight(100);
+		compile.setPrefHeight(300);
 		compile.setPrefWidth(100);
 		box.getChildren().addAll(compile, output);
 		border.setBottom(box);

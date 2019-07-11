@@ -190,7 +190,9 @@ public class YOTab_Pipeline extends YOTab {
 		TextField ox2 = new TextField("0x" + OF);
 		ox2.setEditable(false);
 		registerDisplay.add(ox2, 1, row);
-
+		
+		pipeLineStages(row);
+		
 		String outputDisplay = modifiedDisplay();
 		area.setText(outputDisplay);
 		memDisplay.getChildren().clear();
@@ -278,24 +280,104 @@ public class YOTab_Pipeline extends YOTab {
 	private String modifiedDisplay() {
 		String output = "";
 		Scanner scan = new Scanner(inputText);
-		while (scan.hasNextLine()) {
+		while(scan.hasNextLine()) {
 			String line = scan.nextLine();
-			String addressString = line.substring(line.indexOf("x") + 1, line.indexOf(":"));
+			String addressString = line.substring(line.indexOf("x")+1, line.indexOf(":"));
 			DoubleWord address = new DoubleWord(Long.parseLong(addressString, 16));
-			String restOfLine = line.substring(line.indexOf(":") + 1);
-			if (!restOfLine.contains(":") && !restOfLine.contains(".")) {
-				if (Processor_Pipeline.PC.equals(address))
-					output += ">";
-				else
+			String restOfLine = line.substring(line.indexOf(":")+1);
+			if(!restOfLine.contains(":") && !restOfLine.contains(".")) {
+				if(Processor_Pipeline.addresses[Processor_Pipeline.FETCH_ADDRESS] != null && Processor_Pipeline.addresses[Processor_Pipeline.FETCH_ADDRESS].equals(address))
+					output += "F";
+				else 
+					output += "\u2002";
+				if(Processor_Pipeline.addresses[Processor_Pipeline.DECODE_ADDRESS] != null && Processor_Pipeline.addresses[Processor_Pipeline.DECODE_ADDRESS].equals(address))
+					output += "D";
+				else 
+					output += "\u2002";
+				if(Processor_Pipeline.addresses[Processor_Pipeline.EXECUTE_ADDRESS] != null && Processor_Pipeline.addresses[Processor_Pipeline.EXECUTE_ADDRESS].equals(address))
+					output += "E";
+				else 
+					output += "\u2002";
+				if(Processor_Pipeline.addresses[Processor_Pipeline.MEMORY_ADDRESS] != null && Processor_Pipeline.addresses[Processor_Pipeline.MEMORY_ADDRESS].equals(address))
+					output += "M";
+				else 
+					output += "\u2002";
+				if(Processor_Pipeline.addresses[Processor_Pipeline.WRITEBACK_ADDRESS] != null && Processor_Pipeline.addresses[Processor_Pipeline.WRITEBACK_ADDRESS].equals(address))
+					output+= "W";
+				else 
 					output += "\u2002";
 			} else {
-				output += "\u2002";
+				output += "\u2002\u2002\u2002\u2002\u2002";
 			}
 
-			output += " " + line + "\n";
+			output+=" "+line+"\n";
 		}
 		scan.close();
 		return output;
+	}
+	
+	private int pipeLineStages(int row) {
+		DoubleWord fetchAddress = Processor_Pipeline.addresses[0];
+		registerDisplay.add(new TextField("Fetch"), 0, row);
+		if(fetchAddress == null || !validAddress(fetchAddress)) {
+			registerDisplay.add(new TextField("BUBBLE"), 1, row);
+		} else {
+			registerDisplay.add(new TextField("0x"+fetchAddress.displayToString()), 1, row);
+		}
+		row++;
+
+		DoubleWord decodeAddress = Processor_Pipeline.addresses[1];
+		registerDisplay.add(new TextField("Decode"), 0, row);
+		if(decodeAddress == null || !validAddress(decodeAddress)) {
+			registerDisplay.add(new TextField("BUBBLE"), 1, row);
+		} else {
+			registerDisplay.add(new TextField("0x"+decodeAddress.displayToString()), 1, row);
+		}
+		row++;
+
+		DoubleWord executeAddress = Processor_Pipeline.addresses[2];
+		registerDisplay.add(new TextField("Execute"), 0, row);
+		if(executeAddress == null || !validAddress(executeAddress)) {
+			registerDisplay.add(new TextField("BUBBLE"), 1, row);
+		} else {
+			registerDisplay.add(new TextField("0x"+executeAddress.displayToString()), 1, row);
+		}
+		row++;
+
+		DoubleWord memoryAddress = Processor_Pipeline.addresses[3];
+		registerDisplay.add(new TextField("Memory"), 0, row);
+		if(memoryAddress == null || !validAddress(memoryAddress)) {
+			registerDisplay.add(new TextField("BUBBLE"), 1, row);
+		} else {
+			registerDisplay.add(new TextField("0x"+memoryAddress.displayToString()), 1, row);
+		}
+		row++;
+
+		DoubleWord writeBackAddress = Processor_Pipeline.addresses[4];
+		registerDisplay.add(new TextField("Write Back"), 0, row);
+		if(writeBackAddress == null || !validAddress(writeBackAddress)) {
+			registerDisplay.add(new TextField("BUBBLE"), 1, row);
+		} else {
+			registerDisplay.add(new TextField("0x"+writeBackAddress.displayToString()), 1, row);
+		}
+		row++;
+		return row;
+	}
+
+	private boolean validAddress(DoubleWord address) {
+		Scanner scan = new Scanner(inputText);
+		while(scan.hasNextLine()) {
+			String line = scan.nextLine();
+			String addressString = line.substring(line.indexOf("x")+1, line.indexOf(":"));
+			String restOfLine = line.substring(line.indexOf(":")+1);
+			DoubleWord addressLine = new DoubleWord(Long.parseLong(addressString, 16));
+			if(addressLine.equals(address) && !restOfLine.contains(":") && !restOfLine.contains(".")) {
+				scan.close();
+				return true;
+			}
+		}
+		scan.close();
+		return false;
 	}
 
 }

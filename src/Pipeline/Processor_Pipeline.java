@@ -347,6 +347,11 @@ public class Processor_Pipeline {
 			instruction_finished = true;
 		}
 		PC = addresses[MEMORY_ADDRESS];
+		int index = addresses.length - 2;
+		while(PC.equals(new DoubleWord(-1))) {
+			PC = addresses[index];
+			index--;
+		}
 		if(!instructions[NEXT_WRITEBACK].bubble && instructions[NEXT_WRITEBACK].instruction.equals("ret")) 
 			PC = instructions[NEXT_WRITEBACK].valP;
 		completedInstruction = instructions[NEXT_WRITEBACK];
