@@ -282,7 +282,4 @@ public abstract class LittleEndian {
 		return false;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(LEHexFixer("F", 64));
-	}
 }

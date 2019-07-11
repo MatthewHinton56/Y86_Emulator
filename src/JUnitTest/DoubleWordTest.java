@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import BaseEmulator.DoubleWord;
-import BaseEmulator.LittleEndian;;
+import BaseEmulator.LittleEndian;
+import BaseEmulator.Word;;
 
 /**
  * @author Matth
@@ -26,7 +27,6 @@ class DoubleWordTest {
 	void testDoubleWord() {
 		DoubleWord dw = new DoubleWord();
 		boolean[] array = new boolean[64];
-		System.out.println(Arrays.toString(array));
 		Assertions.assertArrayEquals(array, dw.bitArray);
 	}
 
@@ -35,7 +35,9 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testDoubleWordStringBoolean() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord dwLE = new DoubleWord("1032547698BADCFE", true);
+		DoubleWord dw = new DoubleWord("FEDCBA9876543210", false);
+		Assertions.assertArrayEquals(dwLE.bitArray, dw.bitArray);
 	}
 
 	/**
@@ -43,7 +45,11 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testDoubleWordBooleanArray() {
-		fail("Not yet implemented"); // TODO
+		boolean[] test = new boolean[64];
+		for(int i = 0; i < 64; i++)
+			test[i] = Math.random() > .5;
+		DoubleWord dw = new DoubleWord(test);
+		Assertions.assertArrayEquals(test, dw.bitArray);
 	}
 
 	/**
@@ -51,7 +57,15 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testDoubleWordLong() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		DoubleWord longMax = new DoubleWord(Long.MAX_VALUE);
+		DoubleWord longMin = new DoubleWord(Long.MIN_VALUE);
+		
+		Assertions.assertEquals(-1, negativeOne.calculateValueSigned());
+		Assertions.assertEquals(0, zero.calculateValueSigned());
+		Assertions.assertEquals(Long.MAX_VALUE, longMax.calculateValueSigned());
+		Assertions.assertEquals(Long.MIN_VALUE, longMin.calculateValueSigned());
 	}
 
 	/**
@@ -59,7 +73,13 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testEqualsObject() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		Assertions.assertEquals(negativeOne, negativeOne);
+		Assertions.assertNotEquals(negativeOne, zero);
+		
+		Word wZero = new Word();
+		Assertions.assertNotEquals(wZero, zero);
 	}
 
 	/**
@@ -67,7 +87,15 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testCalculateValueSigned() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord("FFFFFFFFFFFFFFFF", false);
+		DoubleWord zero = new DoubleWord("0000000000000000", false);
+		DoubleWord longMax = new DoubleWord("7FFFFFFFFFFFFFFF", false);
+		DoubleWord longMin = new DoubleWord("8000000000000000", false);
+		
+		Assertions.assertEquals(-1, negativeOne.calculateValueSigned());
+		Assertions.assertEquals(0, zero.calculateValueSigned());
+		Assertions.assertEquals(Long.MAX_VALUE, longMax.calculateValueSigned());
+		Assertions.assertEquals(Long.MIN_VALUE, longMin.calculateValueSigned());
 	}
 
 	/**
