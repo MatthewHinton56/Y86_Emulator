@@ -147,15 +147,12 @@ public abstract class LittleEndian {
 	 * @return the fixed Hex input
 	 */
 	public static String LEHexFixer(String hex, int requiredSize) {
+		hex = (hex.length() % 2 == 1) ? "0" + hex : hex; 
 		requiredSize = requiredSize / 4;
-		char c = hex.charAt(hex.length() - 2);
-		boolean sign = (c >= 'A' && c <= 'F');
+		char c = Character.toUpperCase(hex.charAt(hex.length() - 2));
+		boolean sign = (c >= '8' && c <= 'F');
 		String signExtension = (sign) ? "F" : "0";
 		int pad = requiredSize - hex.length();
-		if (pad % 2 == 1) {
-			hex = hex.substring(0, hex.length() - 1) + signExtension + hex.substring(hex.length() - 1);
-			pad--;
-		}
 		for (int i = 0; i < pad; i++) {
 			hex = hex + signExtension;
 		}
@@ -171,8 +168,8 @@ public abstract class LittleEndian {
 	 */
 	public static String hexFixer(String hex, int requiredSize) {
 		requiredSize = requiredSize / 4;
-		char c = hex.charAt(0);
-		boolean sign = (c >= 'A' && c <= 'F');
+		char c = Character.toUpperCase(hex.charAt(0));
+		boolean sign = (c >= '8' && c <= 'F');
 		String signExtension = (sign) ? "F" : "0";
 		int pad = requiredSize - hex.length();
 		for (int i = 0; i < pad; i++)
@@ -283,5 +280,9 @@ public abstract class LittleEndian {
 			if (c == t)
 				return true;
 		return false;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(LEHexFixer("F", 64));
 	}
 }
