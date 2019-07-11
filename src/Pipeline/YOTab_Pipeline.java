@@ -28,7 +28,7 @@ import javafx.stage.Screen;
 public class YOTab_Pipeline extends YOTab {
 
 	String fileName;
-	Button step, run, initialize;
+	Button pulse, step, run, initialize;
 	TextArea area;
 	ScrollPane pane, displayPane;
 	BorderPane border;
@@ -95,6 +95,16 @@ public class YOTab_Pipeline extends YOTab {
 				initializeDisplay();
 			}
 		});
+		pulse = new Button("Pulse");
+		pulse.setPrefHeight(100);
+		pulse.setPrefWidth(100);
+		pulse.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				Processor_Pipeline.pulse();
+				refresh();
+			}
+		});
+		
 		step = new Button("Step");
 		step.setPrefHeight(100);
 		step.setPrefWidth(100);
@@ -124,7 +134,7 @@ public class YOTab_Pipeline extends YOTab {
 		box = new HBox();
 		box.setPrefHeight(100);
 
-		box.getChildren().addAll(initialize, step, run);
+		box.getChildren().addAll(initialize, pulse, step, run);
 		border.setBottom(box);
 		border.setLeft(textBorder);
 		border.setRight(displayPane);
