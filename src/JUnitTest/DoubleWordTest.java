@@ -119,7 +119,16 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateBitString() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord("FFFFFFFFFFFFFFFF", false);
+		DoubleWord zero = new DoubleWord("0000000000000000", false);
+		DoubleWord longMax = new DoubleWord("7FFFFFFFFFFFFFFF", false);
+		DoubleWord longMin = new DoubleWord("8000000000000000", false);
+		DoubleWord dw = new DoubleWord("FEDCBA9876543210", false);
+		assertEquals("1111111111111111111111111111111111111111111111111111111111111111", negativeOne.generateBitString());
+		assertEquals("0000000000000000000000000000000000000000000000000000000000000000", zero.generateBitString());
+		assertEquals("0111111111111111111111111111111111111111111111111111111111111111", longMax.generateBitString());
+		assertEquals("1000000000000000000000000000000000000000000000000000000000000000", longMin.generateBitString());
+		assertEquals("1111111011011100101110101001100001110110010101000011001000010000", dw.generateBitString());
 	}
 
 	/**
@@ -127,7 +136,11 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateBitArray() {
-		fail("Not yet implemented"); // TODO
+		boolean[] test = new boolean[64];
+		for(int i = 0; i < 64; i++)
+			test[i] = Math.random() > .5;
+		DoubleWord dw = new DoubleWord(test);
+		Assertions.assertArrayEquals(test, dw.generateBitArray());
 	}
 
 	/**
@@ -135,7 +148,18 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateHex() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		DoubleWord longMax = new DoubleWord(Long.MAX_VALUE);
+		DoubleWord longMin = new DoubleWord(Long.MIN_VALUE);
+		DoubleWord dw = new DoubleWord(-81985529216486896l);
+		
+		assertEquals("FFFFFFFFFFFFFFFF", negativeOne.generateHex());
+		assertEquals("0000000000000000", zero.generateHex());
+		assertEquals("7FFFFFFFFFFFFFFF", longMax.generateHex());
+		assertEquals("8000000000000000", longMin.generateHex());
+		assertEquals("FEDCBA9876543210", dw.generateHex());
+		
 	}
 
 	/**
@@ -143,7 +167,17 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateHexLE() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		DoubleWord longMax = new DoubleWord(Long.MAX_VALUE);
+		DoubleWord longMin = new DoubleWord(Long.MIN_VALUE);
+		DoubleWord dw = new DoubleWord(-81985529216486896l);
+		
+		assertEquals("FFFFFFFFFFFFFFFF", negativeOne.generateHexLE());
+		assertEquals("0000000000000000", zero.generateHexLE());
+		assertEquals("FFFFFFFFFFFFFF7F", longMax.generateHexLE());
+		assertEquals("0000000000000080", longMin.generateHexLE());
+		assertEquals("1032547698BADCFE", dw.generateHexLE());
 	}
 
 	/**
@@ -151,7 +185,17 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateBitStringLE() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord("FFFFFFFFFFFFFFFF", false);
+		DoubleWord zero = new DoubleWord("0000000000000000", false);
+		DoubleWord longMax = new DoubleWord("7FFFFFFFFFFFFFFF", false);
+		DoubleWord longMin = new DoubleWord("8000000000000000", false);
+		DoubleWord dw = new DoubleWord("FEDCBA9876543210", false);
+		
+		assertEquals("1111111111111111111111111111111111111111111111111111111111111111", negativeOne.generateBitStringLE());
+		assertEquals("0000000000000000000000000000000000000000000000000000000000000000", zero.generateBitStringLE());
+		assertEquals("1111111111111111111111111111111111111111111111111111111101111111", longMax.generateBitStringLE());
+		assertEquals("0000000000000000000000000000000000000000000000000000000010000000", longMin.generateBitStringLE());
+		assertEquals("0001000000110010010101000111011010011000101110101101110011111110", dw.generateBitStringLE());
 	}
 
 	/**
@@ -159,7 +203,12 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGetSign() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord("FFFFFFFFFFFFFFFF", false);
+		DoubleWord zero = new DoubleWord("0000000000000000", false);
+		DoubleWord longMax = new DoubleWord("7FFFFFFFFFFFFFFF", false);
+		assertEquals(true, negativeOne.getSign());
+		assertEquals(false, zero.getSign());
+		assertEquals(false, longMax.getSign());
 	}
 
 	/**
@@ -167,7 +216,17 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testToString() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		DoubleWord longMax = new DoubleWord(Long.MAX_VALUE);
+		DoubleWord longMin = new DoubleWord(Long.MIN_VALUE);
+		DoubleWord dw = new DoubleWord(-81985529216486896l);
+		
+		assertEquals("FFFFFFFFFFFFFFFF", negativeOne.toString());
+		assertEquals("0000000000000000", zero.toString());
+		assertEquals("7FFFFFFFFFFFFFFF", longMax.toString());
+		assertEquals("8000000000000000", longMin.toString());
+		assertEquals("FEDCBA9876543210", dw.toString());
 	}
 
 	/**
@@ -175,7 +234,19 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testDisplayToString() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord negativeOne = new DoubleWord(-1);
+		DoubleWord zero = new DoubleWord(0);
+		DoubleWord longMax = new DoubleWord(Long.MAX_VALUE);
+		DoubleWord longMin = new DoubleWord(Long.MIN_VALUE);
+		DoubleWord dw = new DoubleWord(-81985529216486896l);
+		DoubleWord half = new DoubleWord("00000000FFFFFFFF", false);
+		
+		assertEquals("FFFFFFFFFFFFFFFF", negativeOne.displayToString());
+		assertEquals("0", zero.displayToString());
+		assertEquals("7FFFFFFFFFFFFFFF", longMax.displayToString());
+		assertEquals("8000000000000000", longMin.displayToString());
+		assertEquals("FEDCBA9876543210", dw.displayToString());
+		assertEquals("FFFFFFFF", half.displayToString());
 	}
 
 	/**
@@ -241,31 +312,16 @@ class DoubleWordTest {
 	 */
 	@Test
 	void testGenerateHexBooleanArrayInt() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link BaseEmulator.LittleEndian#getNibble(char)}.
-	 */
-	@Test
-	void testGetNibble() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link BaseEmulator.LittleEndian#getByte(java.lang.String)}.
-	 */
-	@Test
-	void testGetByte() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link BaseEmulator.LittleEndian#charContains(char[], char)}.
-	 */
-	@Test
-	void testCharContains() {
-		fail("Not yet implemented"); // TODO
+		DoubleWord dw = new DoubleWord("FEDCBA9876543210", false);
+		assertEquals("10", LittleEndian.generateHex(dw.bitArray, 0));
+		assertEquals("21", LittleEndian.generateHex(dw.bitArray, 4));
+		assertEquals("32", LittleEndian.generateHex(dw.bitArray, 8));
+		assertEquals("54", LittleEndian.generateHex(dw.bitArray, 16));
+		assertEquals("76", LittleEndian.generateHex(dw.bitArray, 24));
+		assertEquals("98", LittleEndian.generateHex(dw.bitArray, 32));
+		assertEquals("BA", LittleEndian.generateHex(dw.bitArray, 40));
+		assertEquals("DC", LittleEndian.generateHex(dw.bitArray, 48));
+		assertEquals("FE", LittleEndian.generateHex(dw.bitArray, 56));
 	}
 
 }
