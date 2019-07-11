@@ -22,18 +22,22 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent> {
 
 	public MainStage mainStage;
-	public Menu file, options;
+	public Menu file, dataDisplay, options;
 	public MenuItem newButton, saveButton, loadButton;
 	public RadioMenuItem hex, unsigned, signed, hexLe;
-	public ToggleGroup group;
+	public ToggleGroup group, processor_mode;
 	public static String displaySetting = DisplayBuilder.HEX;
 	// IF length is not stored, array is terminated with zero, and all other values
 	// will not be zero.
 	public RadioMenuItem RDI_Input, RSI_Input, store_RDI_Length_RDX, store_RSI_Length_RCX;
+	public RadioMenuItem sequential, pipeline;
 	public Menu parameters, RDI_Settings, RSI_Settings, RDI_Length, RSI_Length;// Array can be between 0 and 30
 																				// elements.
 	public ToggleGroup RDIGroup, RSIGroup;
 	private Menu instructions;
+	
+	public String mode;
+	
 
 	/**
 	 * Creates an emulator menu bar for the GUI version
@@ -109,7 +113,7 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 				}
 			}
 		});
-		options = new Menu("Data Display");
+		dataDisplay = new Menu("Data Display");
 		hex = new RadioMenuItem(DisplayBuilder.HEX);
 		unsigned = new RadioMenuItem(DisplayBuilder.UNSIGNED);
 		signed = new RadioMenuItem(DisplayBuilder.SIGNED);
@@ -136,9 +140,25 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 		}
 
 		hex.setSelected(true);
-		options.getItems().addAll(hex, hexLe, signed, unsigned);
+		
+		options = new Menu("Options");
+		sequential = new RadioMenuItem(DisplayBuilder.SEQUENTIAL);
+		pipeline = new RadioMenuItem(DisplayBuilder.PIPELINE);
+		
+		processor_mode = new ToggleGroup();
+		sequential.setToggleGroup(processor_mode);
+		pipeline.setToggleGroup(processor_mode);
+		sequential.setSelected(true);
+		
+		pipeline.setOnAction(this);
+		sequential.setOnAction(this);
+		mode = DisplayBuilder.SEQUENTIAL;
+		
+		options.getItems().addAll(pipeline, sequential);
+		
+		dataDisplay.getItems().addAll(hex, hexLe, signed, unsigned);
 		file.getItems().addAll(newButton, saveButton, loadButton);
-		this.getMenus().addAll(file, options, instructions, parameters);
+		this.getMenus().addAll(file, options, dataDisplay, instructions, parameters);
 	}
 
 	/**
@@ -195,5 +215,15 @@ public class EmulatorMenuBar extends MenuBar implements EventHandler<ActionEvent
 				mainStage.ystab.area.setText(mainStage.ystab.area.getText() + "\n");
 			mainStage.ystab.area.setText(mainStage.ystab.area.getText() + archetype + "\n");
 		}
+		
+		String newMode = ((RadioMenuItem) processor_mode.getSelectedToggle()).getText();
+		System.out.println(newMode + " " + mode);
+		if (!newMode.equals(mode))
+		{
+			mode = newMode;
+			System.out.println("here");
+			mainStage.handle(null);
+		}
+		
 	}
 }

@@ -1,6 +1,8 @@
 package GUI;
 
+import BaseEmulator.DisplayBuilder;
 import Compilation.Compiler;
+import Pipeline.YOTab_Pipeline;
 import Sequential.YOTab_Seq;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -51,11 +53,16 @@ public class MainStage extends Application implements EventHandler<ActionEvent> 
 			} else {
 				ystab.output.setText(ystab.output.getText() + compilerOutput[0]);
 				ystab.output.setText(ystab.output.getText() + "Assembly compiled and ready for emulation in yotab");
-
-				yotab = new YOTab_Seq(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output,
-						emb);
+				if(emb.mode.equals(DisplayBuilder.SEQUENTIAL)) {
+					yotab = new YOTab_Seq(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output,
+							emb);
+				} else {
+					yotab = new YOTab_Pipeline(pane, ystab.fileName.substring(0, ystab.fileName.indexOf(".")) + ".yo", output,
+							emb);
+				}
 				yotab.refresh();
 				pane.getTabs().add(yotab);
+				pane.getSelectionModel().selectNext();
 			}
 		} catch (IllegalArgumentException e) {
 			ystab.output.setText(ystab.output.getText() + "Compiler Error Output:\n" + e.getMessage());

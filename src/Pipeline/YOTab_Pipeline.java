@@ -1,4 +1,4 @@
-package Sequential;
+package Pipeline;
 
 import java.util.HashSet;
 import java.util.Scanner;
@@ -25,7 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 
-public class YOTab_Seq extends YOTab {
+public class YOTab_Pipeline extends YOTab {
 
 	String fileName;
 	Button step, run, initialize;
@@ -50,7 +50,7 @@ public class YOTab_Seq extends YOTab {
 	 * @param inputText the text to be displayed
 	 * @param emb       the menu bar to be read from
 	 */
-	public YOTab_Seq(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
+	public YOTab_Pipeline(TabPane parent, String fileName, String inputText, EmulatorMenuBar emb) {
 		this.parent = parent;
 		border = new BorderPane();
 		textBorder = new BorderPane();
@@ -84,13 +84,13 @@ public class YOTab_Seq extends YOTab {
 		initialize.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				if (emb.RDI_Input.isSelected() || emb.RSI_Input.isSelected())
-					Processor_Seq.initializeInputs(emb.RDI_Input.isSelected(),
+					Processor_Pipeline.initializeInputs(emb.RDI_Input.isSelected(),
 							((RadioMenuItem) emb.RDIGroup.getSelectedToggle()).getText(),
 							emb.store_RDI_Length_RDX.isSelected(), emb.RSI_Input.isSelected(),
 							((RadioMenuItem) emb.RSIGroup.getSelectedToggle()).getText(),
 							emb.store_RSI_Length_RCX.isSelected());
 				else
-					Processor_Seq.initialize();
+					Processor_Pipeline.initialize();
 				refresh();
 				initializeDisplay();
 			}
@@ -100,7 +100,7 @@ public class YOTab_Seq extends YOTab {
 		step.setPrefWidth(100);
 		step.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Processor_Seq.step();
+				Processor_Pipeline.step();
 				refresh();
 				stepDisplay();
 			}
@@ -110,7 +110,7 @@ public class YOTab_Seq extends YOTab {
 		run.setPrefWidth(100);
 		run.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Processor_Seq.run();
+				Processor_Pipeline.run();
 				refresh();
 				runDisplay();
 			}
@@ -140,16 +140,16 @@ public class YOTab_Seq extends YOTab {
 		registerDisplay.getChildren().clear();
 		int row = 0;
 		registerDisplay.add(new TextField("Processor info"), 0, row);
-		registerDisplay.add(new TextField("Sequential"), 1, row);
+		registerDisplay.add(new TextField("Pipeline"), 1, row);
 		row++;
 		registerDisplay.add(new TextField("Status"), 0, row);
-		registerDisplay.add(new TextField(Processor_Seq.status), 1, row);
+		registerDisplay.add(new TextField(Processor_Pipeline.status), 1, row);
 		row++;
-		for (String register : Processor_Seq.registerFile.keySet()) {
+		for (String register : Processor_Pipeline.registerFile.keySet()) {
 			TextField tf1 = new TextField(register);
 			tf1.setEditable(false);
 			registerDisplay.add(tf1, 0, row);
-			TextField tf2 = new TextField("0x" + Processor_Seq.registerFile.get(register).displayToString());
+			TextField tf2 = new TextField("0x" + Processor_Pipeline.registerFile.get(register).displayToString());
 			tf2.setEditable(false);
 			registerDisplay.add(tf2, 1, row);
 			row++;
@@ -158,7 +158,7 @@ public class YOTab_Seq extends YOTab {
 		tx1.setEditable(false);
 		registerDisplay.add(tx1, 0, row);
 
-		String PC = (Processor_Seq.PC == null) ? "0" : Processor_Seq.PC.displayToString();
+		String PC = (Processor_Pipeline.PC == null) ? "0" : Processor_Pipeline.PC.displayToString();
 		PC = "0x" + PC;
 		TextField tx2 = new TextField(PC);
 		tx2.setEditable(false);
@@ -218,26 +218,26 @@ public class YOTab_Seq extends YOTab {
 	 * Creates a display entry for step
 	 */
 	protected void stepDisplay() {
-		if (Processor_Seq.initialized) {
+		if (Processor_Pipeline.initialized) {
 			outputDisplay.setText(outputDisplay.getText() + "STEP:\n");
-			if (!Processor_Seq.status.equals("AOK")) {
-				if (Processor_Seq.exceptionGenerated)
+			if (!Processor_Pipeline.status.equals("AOK")) {
+				if (Processor_Pipeline.exceptionGenerated)
 					outputDisplay.setText(
-							outputDisplay.getText() + "The processor exited with:\n" + Processor_Seq.exception + "\n");
+							outputDisplay.getText() + "The processor exited with:\n" + Processor_Pipeline.exception + "\n");
 				else {
 
-					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Seq.PC,
-							Processor_Seq.completedInstruction, Processor_Seq.registerFile,
-							Processor_Seq.exceptionGenerated, Processor_Seq.exception,
-							Processor_Seq.initialRegisterFile, Processor_Seq.finalRegisterFile,
-							Processor_Seq.initialMemory, Processor_Seq.finalMemory);
+					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Pipeline.PC,
+							Processor_Pipeline.completedInstruction, Processor_Pipeline.registerFile,
+							Processor_Pipeline.exceptionGenerated, Processor_Pipeline.exception,
+							Processor_Pipeline.initialRegisterFile, Processor_Pipeline.finalRegisterFile,
+							Processor_Pipeline.initialMemory, Processor_Pipeline.finalMemory);
 
 					outputDisplay.setText(outputDisplay.getText() + output);
 				}
 			} else {
-				String output = DisplayBuilder.stepDisplayBuilder(Processor_Seq.completedInstruction.address,
-						Processor_Seq.completedInstruction, Processor_Seq.stepBeforeReg, Processor_Seq.stepAfterReg,
-						Processor_Seq.stepBeforeMem, Processor_Seq.stepAfterMem);
+				String output = DisplayBuilder.stepDisplayBuilder(Processor_Pipeline.completedInstruction.address,
+						Processor_Pipeline.completedInstruction, Processor_Pipeline.stepBeforeReg, Processor_Pipeline.stepAfterReg,
+						Processor_Pipeline.stepBeforeMem, Processor_Pipeline.stepAfterMem);
 				outputDisplay.setText(outputDisplay.getText() + output);
 			}
 		}
@@ -247,10 +247,10 @@ public class YOTab_Seq extends YOTab {
 	 * Creates a run display entry
 	 */
 	protected void runDisplay() {
-		if (Processor_Seq.initialized) {
-			String output = DisplayBuilder.runDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile,
-					Processor_Seq.exceptionGenerated, Processor_Seq.exception, Processor_Seq.initialRegisterFile,
-					Processor_Seq.finalRegisterFile, Processor_Seq.initialMemory, Processor_Seq.finalMemory);
+		if (Processor_Pipeline.initialized) {
+			String output = DisplayBuilder.runDisplayBuilder(Processor_Pipeline.PC, Processor_Pipeline.registerFile,
+					Processor_Pipeline.exceptionGenerated, Processor_Pipeline.exception, Processor_Pipeline.initialRegisterFile,
+					Processor_Pipeline.finalRegisterFile, Processor_Pipeline.initialMemory, Processor_Pipeline.finalMemory);
 			outputDisplay.setText(outputDisplay.getText() + output);
 		}
 	}
@@ -260,12 +260,12 @@ public class YOTab_Seq extends YOTab {
 	 */
 	public void initializeDisplay() {
 		outputDisplay.setText("Processor output:\n\n Initialize:\n");
-		if (Processor_Seq.status.equals("HLT")) {
+		if (Processor_Pipeline.status.equals("HLT")) {
 			outputDisplay.setText(outputDisplay.getText()
 					+ "Program failed to initialize, check that all memory locations are valid");
 		} else {
 			outputDisplay.setText(outputDisplay.getText() + "PC: "
-					+ DisplayBuilder.initializeDisplayBuilder(Processor_Seq.PC, Processor_Seq.registerFile));
+					+ DisplayBuilder.initializeDisplayBuilder(Processor_Pipeline.PC, Processor_Pipeline.registerFile));
 		}
 	}
 
@@ -284,7 +284,7 @@ public class YOTab_Seq extends YOTab {
 			DoubleWord address = new DoubleWord(Long.parseLong(addressString, 16));
 			String restOfLine = line.substring(line.indexOf(":") + 1);
 			if (!restOfLine.contains(":") && !restOfLine.contains(".")) {
-				if (Processor_Seq.PC.equals(address))
+				if (Processor_Pipeline.PC.equals(address))
 					output += ">";
 				else
 					output += "\u2002";

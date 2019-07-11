@@ -14,6 +14,9 @@ public class DisplayBuilder {
 	public static final String SIGNED = "Signed";
 	public static final String HEXLE = "Hex LE";
 	public static String DISPLAY_SETTING = HEX;
+	
+	public static final String SEQUENTIAL = "Sequential";
+	public static final String PIPELINE = "Pipeline";
 
 	public static String displayText(LittleEndian val) {
 		switch (DISPLAY_SETTING) {
