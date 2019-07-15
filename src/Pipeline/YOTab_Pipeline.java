@@ -102,6 +102,7 @@ public class YOTab_Pipeline extends YOTab {
 			public void handle(ActionEvent arg0) {
 				Processor_Pipeline.pulse();
 				refresh();
+				pulseDisplay();
 			}
 		});
 		
@@ -141,6 +142,42 @@ public class YOTab_Pipeline extends YOTab {
 		border.setCenter(memDisplayScrollPane);
 		this.setContent(border);
 		this.setText(fileName);
+	}
+
+	protected void pulseDisplay() {
+		if (Processor_Pipeline.initialized) {
+			Processor_Pipeline.pulse();
+			outputDisplay.setText(outputDisplay.getText() + "PULSE:\n");
+			if (Processor_Pipeline.status.equals("HLT")) {
+				if (Processor_Pipeline.exceptionGenerated)
+					outputDisplay.setText(
+							outputDisplay.getText() + "The processor exited with:\n" + Processor_Pipeline.exception + "\n");
+				else {
+						String output = DisplayBuilder.displayPipeline(Processor_Pipeline.addresses, Processor_Pipeline.instructions) + "\n";
+						output += DisplayBuilder.stepCompletionDisplayBuilder(Processor_Pipeline.PC,
+							Processor_Pipeline.completedInstruction, Processor_Pipeline.registerFile,
+							Processor_Pipeline.exceptionGenerated, Processor_Pipeline.exception,
+							Processor_Pipeline.initialRegisterFile, Processor_Pipeline.finalRegisterFile,
+							Processor_Pipeline.initialMemory, Processor_Pipeline.finalMemory);
+
+						outputDisplay.setText(outputDisplay.getText() + output);
+				}
+			} else {
+				String output = DisplayBuilder.displayPipeline(Processor_Pipeline.addresses, Processor_Pipeline.instructions) + "\n";
+				if(Processor_Pipeline.cp_finished)
+				{
+					output += DisplayBuilder.pulseInstructionCompletionDisplayBuilder(Processor_Pipeline.completedInstruction.address,
+							Processor_Pipeline.completedInstruction, Processor_Pipeline.pulseBeforeReg, Processor_Pipeline.pulseAfterReg,
+							Processor_Pipeline.pulseBeforeMem, Processor_Pipeline.pulseAfterMem);	
+				}
+				else
+				{
+					output += DisplayBuilder.pulseDisplayBuilder(Processor_Pipeline.pulseBeforeReg, 
+							Processor_Pipeline.pulseAfterReg, Processor_Pipeline.pulseBeforeMem, Processor_Pipeline.pulseAfterMem);
+				}
+				outputDisplay.setText(outputDisplay.getText() + output);
+			}
+		} 
 	}
 
 	/**
@@ -237,8 +274,8 @@ public class YOTab_Pipeline extends YOTab {
 					outputDisplay.setText(
 							outputDisplay.getText() + "The processor exited with:\n" + Processor_Pipeline.exception + "\n");
 				else {
-
-					String output = DisplayBuilder.stepCompletionDisplayBuilder(Processor_Pipeline.PC,
+					String output = DisplayBuilder.displayPipeline(Processor_Pipeline.addresses, Processor_Pipeline.instructions) + "\n";
+					output += DisplayBuilder.stepCompletionDisplayBuilder(Processor_Pipeline.PC,
 							Processor_Pipeline.completedInstruction, Processor_Pipeline.registerFile,
 							Processor_Pipeline.exceptionGenerated, Processor_Pipeline.exception,
 							Processor_Pipeline.initialRegisterFile, Processor_Pipeline.finalRegisterFile,
@@ -247,7 +284,8 @@ public class YOTab_Pipeline extends YOTab {
 					outputDisplay.setText(outputDisplay.getText() + output);
 				}
 			} else {
-				String output = DisplayBuilder.stepDisplayBuilder(Processor_Pipeline.completedInstruction.address,
+				String output = DisplayBuilder.displayPipeline(Processor_Pipeline.addresses, Processor_Pipeline.instructions) + "\n";
+				output += DisplayBuilder.stepDisplayBuilder(Processor_Pipeline.completedInstruction.address,
 						Processor_Pipeline.completedInstruction, Processor_Pipeline.stepBeforeReg, Processor_Pipeline.stepAfterReg,
 						Processor_Pipeline.stepBeforeMem, Processor_Pipeline.stepAfterMem);
 				outputDisplay.setText(outputDisplay.getText() + output);
@@ -260,7 +298,8 @@ public class YOTab_Pipeline extends YOTab {
 	 */
 	protected void runDisplay() {
 		if (Processor_Pipeline.initialized) {
-			String output = DisplayBuilder.runDisplayBuilder(Processor_Pipeline.PC, Processor_Pipeline.registerFile,
+			String output = DisplayBuilder.displayPipeline(Processor_Pipeline.addresses, Processor_Pipeline.instructions) + "\n";
+			output += DisplayBuilder.runDisplayBuilder(Processor_Pipeline.PC, Processor_Pipeline.registerFile,
 					Processor_Pipeline.exceptionGenerated, Processor_Pipeline.exception, Processor_Pipeline.initialRegisterFile,
 					Processor_Pipeline.finalRegisterFile, Processor_Pipeline.initialMemory, Processor_Pipeline.finalMemory);
 			outputDisplay.setText(outputDisplay.getText() + output);

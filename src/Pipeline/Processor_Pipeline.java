@@ -19,7 +19,7 @@ public class Processor_Pipeline {
 	public static final RegisterFile registerFile = new RegisterFile();
 	public static DoubleWord PC = new DoubleWord(0);
 	public static String status = "HLT";
-	public static TreeMap<String, DoubleWord> initialRegisterFile, stepBeforeReg, stepAfterReg, finalRegisterFile, pulseBeforeRg, pulseAfterReg;
+	public static TreeMap<String, DoubleWord> initialRegisterFile, stepBeforeReg, stepAfterReg, finalRegisterFile, pulseBeforeReg, pulseAfterReg;
 	public static TreeMap<Long, DoubleWord> initialMemory, stepBeforeMem, stepAfterMem, finalMemory, pulseBeforeMem, pulseAfterMem;
 	public static boolean initialized;
 	public static String exception;
@@ -45,6 +45,7 @@ public class Processor_Pipeline {
 	public static boolean misprediction; //jump misprediction
 	public static boolean mem_stall;
 	public static boolean temp_stall;
+	public static boolean cp_finished;
 
 	/**
 	 * Fetches the next instruction to process
@@ -396,9 +397,10 @@ public class Processor_Pipeline {
 	}
 
 	public static void pulse() {
+		cp_finished = false;
 		if(status.equals("AOK")) {
-			Processor_Seq.stepBeforeMem = Memory.createImage();
-			Processor_Seq.stepBeforeReg = Processor_Seq.registerFile.createImage();
+			Processor_Pipeline.pulseBeforeMem = Memory.createImage();
+			Processor_Pipeline.pulseBeforeReg = Processor_Pipeline.registerFile.createImage();
 			writeBack_control();
 			try {
 				memory_control();
@@ -419,6 +421,7 @@ public class Processor_Pipeline {
 				}
 			}
 		}
+		cp_finished = instruction_finished;
 		if (status.equals("AOK")) {
 			Processor_Pipeline.pulseAfterMem = Memory.createImage();
 			Processor_Pipeline.pulseAfterReg = Processor_Pipeline.registerFile.createImage();

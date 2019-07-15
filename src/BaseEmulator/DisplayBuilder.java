@@ -19,6 +19,9 @@ public class DisplayBuilder {
 	public static final String PIPELINE = "Pipeline";
 
 	public static String displayText(LittleEndian val) {
+		
+		if(val.equals(new DoubleWord(-1)))
+			return "BUBBLE";
 		switch (DISPLAY_SETTING) {
 		case SIGNED:
 			return (val.calculateValueSigned() + " ");
@@ -200,5 +203,61 @@ public class DisplayBuilder {
 		output += memoryDifference(initialMemory, finalMemory, "FINAL");
 		return output;
 	}
-
+	
+	/**
+	 * @param instructions the instructions in the pipeline
+	 * @param addresses the addresses of the pipeline
+	 * @return The current pipeline as a string
+	 */
+	public static String displayPipeline(DoubleWord[] addresses, Instruction[] instructions) {
+		
+		String output = "";
+		output += "Fetch: " + displayText(addresses[0]) + "\n";
+		output += "Decode: " + displayText(addresses[1]) + "\n";
+		output += "Execute: " + displayText(addresses[2]) + "\n";
+		output += "Memory: " + displayText(addresses[3]) + "\n";
+		output += "WriteBack: " + displayText(addresses[4]) + "\n";
+		
+		return output;
+	}
+	
+	/**
+	 * @param pulseBeforeReg the image prior to step - reg
+	 * @param pulseAfterReg  the image after the step - reg
+	 * @param pulseBeforeMem the image prior to step - mem
+	 * @param pulseAfterMem  the image after the step - mem
+	 * @return the output display of the pulse
+	 */
+	public static String pulseDisplayBuilder(
+			TreeMap<String, DoubleWord> pulseBeforeReg, TreeMap<String, DoubleWord> pulseAfterReg,
+			TreeMap<Long, DoubleWord> pulseBeforeMem, TreeMap<Long, DoubleWord> pulseAfterMem) {
+		
+		String output = "";
+		output += DisplayBuilder.registerDifference(pulseBeforeReg, pulseAfterReg, "PULSE");
+		output += DisplayBuilder.memoryDifference(pulseBeforeMem, pulseBeforeMem, "PULSE");
+		return output;
+	}
+	
+	/**
+	 * Step output display after one step execution, and HLT was not generated
+	 * 
+	 * @param address       the address of completed instruction
+	 * @param completed     the completed instruction
+	 * @param pulseBeforeReg the image prior to step - reg
+	 * @param pulseAfterReg  the image after the step - reg
+	 * @param pulseBeforeMem the image prior to step - mem
+	 * @param pulseAfterMem  the image after the step - mem
+	 * @return the output string of the step
+	 */
+	public static String pulseInstructionCompletionDisplayBuilder(DoubleWord address, Instruction completed,
+			TreeMap<String, DoubleWord> pulseBeforeReg, TreeMap<String, DoubleWord> pulseAfterReg,
+			TreeMap<Long, DoubleWord> pulseBeforeMem, TreeMap<Long, DoubleWord> pulseAfterMem) {
+		
+		String output = "";
+		output += "PC: " + DisplayBuilder.displayText(address) + "\n";
+		output += "Completed Instruction: " + completed.buildDisplayInstruction() + "\n";
+		output += DisplayBuilder.registerDifference(pulseBeforeReg, pulseAfterReg, "PULSE");
+		output += DisplayBuilder.memoryDifference(pulseBeforeMem, pulseAfterMem, "PULSE");
+		return output;
+	}
 }

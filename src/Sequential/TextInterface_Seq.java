@@ -86,6 +86,7 @@ public class TextInterface_Seq extends TextInterface {
 	 */
 	@Override
 	public void clockPulse() {
+		
 	}
 
 	/**

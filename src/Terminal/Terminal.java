@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import BaseEmulator.DisplayBuilder;
 import Compilation.Compiler;
+import Pipeline.TextInterface_Pipeline;
 import Sequential.Processor_Seq;
 import Sequential.TextInterface_Seq;
 
@@ -33,14 +34,43 @@ public class Terminal {
 		boolean programInitialized = false;
 		String compiledText = "";
 		Scanner inputScanner = new Scanner(System.in);
-		control = new TextInterface_Seq();
-		pipelined = false;
+		System.out.println("Mode (1) = Sequential");
+		System.out.println("Mode (2) = Pipeline");
+		System.out.print("Please select Mode: ");
+		boolean valid = false;
+		
+		while(!valid)
+		{
+			String mode = inputScanner.nextLine();
+			if(mode.equals("1"))
+			{
+				valid = true;
+				pipelined = false;
+				control = new TextInterface_Seq();
+				
+			}
+			else if(mode.equals("2"))
+			{
+				valid = true;
+				pipelined = true;
+				control = new TextInterface_Pipeline();
+			}
+			else
+			{
+				System.out.println("Please select Valid Mode");
+				System.out.println("Mode (1) = Sequential");
+				System.out.println("Mode (2) = Pipeline");
+			}
+		}
+		
 		while (running) {
 			System.out.print("(Y86): ");
 			String input = inputScanner.nextLine();
 			String[] parsedInput = input.split("\\s+");
 			if (parsedInput.length > 0) {
 				switch (parsedInput[0].toLowerCase()) {
+				case "e":
+				case "exit":
 				case "q":
 				case "quit":
 					System.out.println("Program Exitting");
@@ -59,6 +89,7 @@ public class Terminal {
 					}
 					break;
 				case "compile":
+				case "c":
 					compiledText = compile(fileLoad, fileText);
 					programCompiled = (compiledText != null);
 					programInitialized = false;
@@ -105,7 +136,6 @@ public class Terminal {
 					break;
 				case "clockpulse":
 				case "cp":
-				case "c":
 					if (pipelined) {
 						if (programInitialized) {
 							processFlags(parsedInput);
@@ -113,6 +143,10 @@ public class Terminal {
 						} else {
 							System.out.println("Program is not initialized");
 						}
+					}
+					else
+					{
+						System.out.println("Processor is Sequential");
 					}
 					break;
 				case "reg":
@@ -139,6 +173,10 @@ public class Terminal {
 
 						if (programInitialized)
 							control.pipeline(compiledText);
+					}
+					else
+					{
+						System.out.println("Processor is Sequential");
 					}
 					break;
 				case "lc":
@@ -255,6 +293,36 @@ public class Terminal {
 						System.out.println("No Program is currently compiled");
 					}
 					break;
+				
+				case "mode":
+				case "m":
+					valid = false;
+					System.out.println("Mode (1) = Sequential");
+					System.out.println("Mode (2) = Pipeline");
+					System.out.print("Please select Mode: ");
+					while(!valid)
+					{
+						String mode = inputScanner.nextLine();
+						if(mode.equals("1"))
+						{
+							valid = true;
+							pipelined = false;
+							control = new TextInterface_Seq();
+							
+						}
+						else if(mode.equals("2"))
+						{
+							valid = true;
+							pipelined = true;
+							control = new TextInterface_Pipeline();
+						}
+						else
+						{
+							System.out.println("Please select Valid Mode");
+							System.out.println("Mode (1) = Sequential");
+							System.out.println("Mode (2) = Pipeline");
+						}
+					}
 
 				default:
 					if (input.length() > 0) {
